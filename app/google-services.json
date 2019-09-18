@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "984261137493",
+    "firebase_url": "https://mobilesw-8dd3b.firebaseio.com",
+    "project_id": "mobilesw-8dd3b",
+    "storage_bucket": "mobilesw-8dd3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984261137493:android:2887a9975421ea1f67f0dc",
+        "android_client_info": {
+          "package_name": "com.example.wlgusdn.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984261137493-5tcuiqv9ntfph67bmg15rea7m82riq56.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXeNxqfxJ7F2RoGNx7liGdxI3_4uJW83Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984261137493-5tcuiqv9ntfph67bmg15rea7m82riq56.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

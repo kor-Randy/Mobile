@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
-import net.daum.mf.map.api.MapView
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.jar.Manifest
@@ -18,7 +16,6 @@ import android.location.LocationManager
 import android.R.string.cancel
 import android.content.DialogInterface
 import android.content.Intent
-import android.support.v4.app.ActivityCompat
 import android.widget.Toast
 import net.daum.mf.map.n.api.internal.NativeMapLocationManager.setCurrentLocationTrackingMode
 import android.Manifest.permission
@@ -28,15 +25,19 @@ import android.location.Address
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
-import android.support.v4.content.ContextCompat
-import android.support.annotation.NonNull
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapView
 
 
-class MainActivity : AppCompatActivity(),MapView.POIItemEventListener,MapView.MapViewEventListener, MapView.CurrentLocationEventListener,MapReverseGeoCoder.ReverseGeoCodingResultListener {
+class MainActivity : AppCompatActivity(), MapView.POIItemEventListener,MapView.MapViewEventListener, MapView.CurrentLocationEventListener,MapReverseGeoCoder.ReverseGeoCodingResultListener {
 
 
 
@@ -46,10 +47,16 @@ class MainActivity : AppCompatActivity(),MapView.POIItemEventListener,MapView.Ma
     val LOG_TAG : String = "MainActivity"
     var mMapView : MapView? = null
     val clsPoint : MapPoint = MapPoint.mapPointWithGeoCoord(38.0,100.0)
-    val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("9282b263e3f548e2a78da38dcecffc83",clsPoint,this,this)
+    val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("4a70536a991d4cd7bd72f612b7ab81b8",clsPoint,this,this)
     var mButtonSearch : Button? = null
     var mEditTextQuery : EditText? = null
     val mGeocoder : Geocoder = Geocoder(this)
+
+    val database : FirebaseDatabase = FirebaseDatabase.getInstance()
+
+
+
+    val ref : DatabaseReference = database.reference
 
 
     @SuppressLint("ObsoleteSdkInt")
@@ -60,6 +67,16 @@ class MainActivity : AppCompatActivity(),MapView.POIItemEventListener,MapView.Ma
         mMapView = findViewById(R.id.Main_Map)
         mEditTextQuery = findViewById(R.id.editTextQuery)
         mButtonSearch = findViewById(R.id.buttonSearch)
+
+        mButtonSearch!!.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                ref.child("Test").setValue(mEditTextQuery!!.text.toString())
+
+
+
+            }
+        })
 
         mMapView!!.setMapViewEventListener(this)
         mMapView!!.setPOIItemEventListener(this)
@@ -73,6 +90,7 @@ class MainActivity : AppCompatActivity(),MapView.POIItemEventListener,MapView.Ma
                            //  "daummaps://route?sp="+37.537229+","+127.005515+"&ep="+37.4979502+","+127.0276368+"&by=PUBLICTRANSIT"
         val intent:Intent = Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);*/
+
 
 
 
