@@ -1,7 +1,6 @@
 package com.example.wlgusdn.mobile
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 
