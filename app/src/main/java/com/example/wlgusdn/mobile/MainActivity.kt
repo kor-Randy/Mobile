@@ -60,7 +60,16 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        /*
+        val button_chat : Button = findViewById(R.id.ChatRoom)
+
+
+        button_chat.setOnClickListener {
+            val nextIntent = Intent(this, ChatRoom::class.java)
+            startActivity(nextIntent)
+        }
+*/
 
     }
 
-    }
+}

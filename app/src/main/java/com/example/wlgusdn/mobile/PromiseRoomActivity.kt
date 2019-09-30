@@ -47,7 +47,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
     var Text_Place : TextView? = null
     var Text_Time : TextView? = null
     var Text_Content : TextView? = null
-    var Bu_ChatRoom : Button? = null
+    //var Bu_ChatRoom : Button? = null
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
     var poi1 : MapPOIItem = MapPOIItem()
     var poi2 : MapPOIItem = MapPOIItem()
@@ -68,11 +68,17 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
         Text_Participant = findViewById(R.id.PromiseRoom_TextView_Participant)
         Text_Place = findViewById(R.id.PromiseRoom_TextView_Place)
         Text_Time = findViewById(R.id.PromiseRoom_TextView_Time)
-        Bu_ChatRoom = findViewById(R.id.PromiseRoom_Button_ChatRoom)
+        //Bu_ChatRoom = findViewById(R.id.PromiseRoom_Button_ChatRoom)
+        val Bu_ChatRoom : Button = findViewById(R.id.PromiseRoom_Button_ChatRoom)
+
+
+        Bu_ChatRoom.setOnClickListener {
+            val nextIntent = Intent(this, ChatRoom::class.java)
+            startActivity(nextIntent)
+        }
+
 
         //친구들 위치 넣기
-
-
 
         mMapView!!.setMapViewEventListener(this)
         mMapView!!.setPOIItemEventListener(this)
