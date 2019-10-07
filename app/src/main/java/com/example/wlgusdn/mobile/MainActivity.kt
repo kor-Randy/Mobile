@@ -31,6 +31,8 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import net.daum.mf.map.api.MapPOIItem
@@ -41,21 +43,29 @@ class MainActivity : AppCompatActivity() {
 
     var bu : Button? = null
 
-
+    private lateinit var navbtn : Button
+    private lateinit var createbtn : Button
 
     @SuppressLint("ObsoleteSdkInt")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        navbtn = findViewById(R.id.Main_Button_Navi)
+        createbtn = findViewById(R.id.Main_Button_CreatePromise)
 
-        bu=findViewById(R.id.buttonSearch)
-        bu!!.setOnClickListener(object: View.OnClickListener {
+
+        navbtn.setOnClickListener {
+            val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+            if(!drawer.isDrawerOpen(GravityCompat.START)){drawer.openDrawer(GravityCompat.START)}
+            else drawer.closeDrawer(GravityCompat.END)
+        }
+
+        createbtn.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
-                val intent : Intent = Intent(this@MainActivity,PromiseRoomActivity::class.java)
+                val intent : Intent = Intent(this@MainActivity,CreatePromiseActivity::class.java)
 
                 startActivity(intent)
-
 
             }
         })

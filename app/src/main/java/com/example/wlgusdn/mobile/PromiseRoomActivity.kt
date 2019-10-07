@@ -28,8 +28,8 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 
-class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapView.CurrentLocationEventListener,
-    MapReverseGeoCoder.ReverseGeoCodingResultListener
+class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapView.CurrentLocationEventListener
+
 {
     val GPS_ENABLE_REQUEST_CODE : Int = 2001
     val PERMISSIONS_REQUEST_CODE : Int = 100
@@ -39,7 +39,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
     var clsPoint : ArrayList<MapPoint>? = ArrayList<MapPoint>()
     var myPoint : MapPoint? = null
 
-    //val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("4a70536a991d4cd7bd72f612b7ab81b8",clsPoint,this,this)
+
     var mButtonSearch : Button? = null
     var mEditTextQuery : EditText? = null
     val mGeocoder : Geocoder = Geocoder(this)
@@ -278,26 +278,12 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
 
     }
 
-    override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {
-        onFinishReverseGeoCoding("Fail")
-
-    }
-
-    override fun onReverseGeoCoderFoundAddress(p0: MapReverseGeoCoder?, p1: String?) {
-
-        Log.d("check","Success to GeoCoder")
-        p0.toString()
-        onFinishReverseGeoCoding(p1!!)
-
-    }
 
     override fun onCurrentLocationUpdateFailed(p0: MapView?) {
 
 
     }
-    private fun onFinishReverseGeoCoding(result: String) {
-        Toast.makeText(this, "Reverse Geo-coding : " + result, Toast.LENGTH_SHORT).show();
-    }
+
 
     /*
      * ActivityCompat.requestPermissions를 사용한 퍼미션 요청의 결과를 리턴받는 메소드입니다.
