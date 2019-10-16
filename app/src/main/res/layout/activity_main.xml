@@ -77,9 +77,20 @@
              android:layout_marginBottom="10dp"
              android:text="생성"
              app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintHorizontal_bias="0.756"
              app:layout_constraintLeft_toLeftOf="parent"
              app:layout_constraintRight_toRightOf="parent"
              app:layout_constraintTop_toBottomOf="@+id/Main_List_Promise" />
+
+         <Button
+             android:id="@+id/Main_Button_PromiseRoom"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="40dp"
+             android:layout_marginBottom="8dp"
+             android:text="약속방"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintStart_toStartOf="parent" />
       </androidx.constraintlayout.widget.ConstraintLayout>
 
    </LinearLayout>

@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navbtn : Button
     private lateinit var createbtn : Button
+    private lateinit var promiseroombtn : Button
 
     @SuppressLint("ObsoleteSdkInt")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,13 +53,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         navbtn = findViewById(R.id.Main_Button_Navi)
         createbtn = findViewById(R.id.Main_Button_CreatePromise)
-
+        promiseroombtn = findViewById(R.id.Main_Button_PromiseRoom)
 
         navbtn.setOnClickListener {
             val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
             if(!drawer.isDrawerOpen(GravityCompat.START)){drawer.openDrawer(GravityCompat.START)}
             else drawer.closeDrawer(GravityCompat.END)
         }
+
+        promiseroombtn.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                val intent : Intent = Intent(this@MainActivity,ChatRoom::class.java)
+
+                startActivity(intent)
+
+            }
+        })
 
         createbtn.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {

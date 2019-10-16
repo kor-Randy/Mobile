@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_createpromise.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
@@ -29,7 +31,11 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
     var tv_Friends : TextView? = null
     var et_ExtraAddress : EditText? = null
     var et_Content : EditText? = null
+    var bu_Create : Button? = null
+    var tv_Participant : TextView? = null
 
+    val database : FirebaseDatabase = FirebaseDatabase.getInstance()
+    val myRef : DatabaseReference = database.getReference("PromiseRoom")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +47,7 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
         tv_Friends = findViewById(R.id.CreatePromise_TextView_Participant)
         tv_Place = findViewById(R.id.CreatePromise_TextView_Place)
         tv_Time = findViewById(R.id.CreatePromise_TextView_Time)
+        tv_Participant = findViewById(R.id.CreatePromise_TextView_Participant)
 
         et_ExtraAddress = findViewById(R.id.CreatePromise_EditText_ExtraAddress)
         et_Content = findViewById(R.id.CreatePromise_EditText_Content)
@@ -48,6 +55,23 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
         bu_Date = findViewById(R.id.CreatePromise_Button_Date)
         bu_Invite = findViewById(R.id.CreatePromise_Button_Invite)
         bu_Time = findViewById(R.id.CreatePromise_Button_Time)
+        bu_Create = findViewById(R.id.CreatePromise_Button_Create)
+
+
+        tv_Participant!!.text="지현우,정문경"
+
+        bu_Create!!.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                val part : ArrayList<String> = tv_Participant!!.text.toString().split(',') as ArrayList<String>
+
+                val PRD : PromiseRoomData = PromiseRoomData(tv_Date!!.text.toString(),tv_Time!!.text.toString(),tv_Place!!.text.toString(),
+                        et_ExtraAddress!!.text.toString(),et_Content!!.text.toString(),part)
+
+                myRef.child("PromiseNumber").setValue(PRD)
+
+            }
+        })
 
         bu_Date!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
