@@ -55,7 +55,7 @@ class Chatroom_ChatAdapter (chatList : MutableList<ChatRoom_Chat>) : RecyclerVie
         val chat = chatList!![position]
         val who = chat.who
 
-        return if(who == "my") {
+        return if(who == "user") {
             VIEW_TYPE_MY_MESSAGE
         }
         else {

@@ -50,6 +50,16 @@
                 android:text="B"
                 android:textSize="14dp" />
 
+        <Button
+                android:id="@+id/ChatRoom_GalleryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="image"
+                android:textSize="14dp" />
+
         <EditText
                 android:id="@+id/ChatRoom_ChatEditText"
                 android:hint="Enter message"
