@@ -17,8 +17,7 @@ import kotlinx.android.synthetic.main.activity_chatroom.*
 
 class ChatRoom : AppCompatActivity(){
 
-    val database = FirebaseDatabase.getInstance().reference
-    var dbcount : Int = 0
+    val database = FirebaseDatabase.getInstance().getReference()
     var ChatEditText : EditText? = null
 
     @SuppressLint("ObsoleteSdkInt")
@@ -34,7 +33,7 @@ class ChatRoom : AppCompatActivity(){
         val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
 
 
-        val GalleryButton : Button = findViewById(R.id.ChatRoom_GalleryButton)
+        val GalleryButton : ImageButton = findViewById(R.id.ChatRoom_GalleryButton)
         val OtherButton : Button = findViewById(R.id.ChatRoom_OtherButton)
 
 
@@ -91,11 +90,9 @@ class ChatRoom : AppCompatActivity(){
     }
 
     private fun writeNewMessage(userId: String, text: String, time: String) {
-        dbcount = dbcount + 1
+        val chat : ChatRoom_Chat = ChatRoom_Chat(userId, text, time)
+        database.child("PromiseRoom").child("PromiseNumber").child("chatroom").push().setValue(chat)
 
-        database.child(dbcount.toString()).child("who").setValue(userId)
-        database.child(dbcount.toString()).child("text").setValue(text)
-        database.child(dbcount.toString()).child("time").setValue(time)
 
     }
 
@@ -120,6 +117,15 @@ class ChatRoom : AppCompatActivity(){
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode  == -1){
+            val imageURL : String = data?.data.toString()
+            println("${imageURL}")
+            ChatEditText?.setText(imageURL)
+
+        }
+    }
 
 
 }

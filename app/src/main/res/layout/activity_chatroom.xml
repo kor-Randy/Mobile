@@ -7,6 +7,8 @@
         tools:context=".MainActivity"
         >
 
+
+
     <androidx.recyclerview.widget.RecyclerView
 
             android:id="@+id/ChatRoom_RecyclerView"
@@ -50,15 +52,17 @@
                 android:text="B"
                 android:textSize="14dp" />
 
-        <Button
+        <ImageButton
                 android:id="@+id/ChatRoom_GalleryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_gravity="bottom"
+                android:background="@android:drawable/ic_menu_gallery"
                 android:clickable="true"
                 android:gravity="center"
                 android:text="image"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                android:contentDescription="TODO" />
 
         <EditText
                 android:id="@+id/ChatRoom_ChatEditText"
