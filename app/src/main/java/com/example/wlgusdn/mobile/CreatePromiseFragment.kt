@@ -1,61 +1,71 @@
 package com.example.wlgusdn.mobile
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_createpromise.*
+import kotlinx.android.synthetic.main.fragment_createpromise.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 
-class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener
-{
-
-    var mMapView : MapView? = null
-    var clsPoint : ArrayList<MapPoint>? = ArrayList<MapPoint>()
-    var bu_Date : Button? = null
-    var bu_Time : Button? = null
-    var bu_Invite : Button? = null
-    var tv_Place : TextView? = null
-    var tv_Date : TextView? = null
-    var tv_Time : TextView? = null
-    var tv_Friends : TextView? = null
-    var et_ExtraAddress : EditText? = null
-    var et_Content : EditText? = null
-    var bu_Create : Button? = null
-    var tv_Participant : TextView? = null
+@SuppressLint("ValidFragment")
+class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
+    var thiscontext : Context = context
+   var mMapView : MapView? = null
+    lateinit  var clsPoint : ArrayList<MapPoint>
+    lateinit var bu_Date : Button
+    lateinit var bu_Time : Button
+    lateinit var bu_Invite : Button
+    lateinit var tv_Place : TextView
+    lateinit var tv_Date : TextView
+    lateinit var tv_Time : TextView
+    lateinit var tv_Friends : TextView
+    lateinit var et_ExtraAddress : EditText
+    lateinit var et_Content : EditText
+    lateinit var bu_Create : Button
+    lateinit var tv_Participant : TextView
 
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
     val myRef : DatabaseReference = database.getReference("PromiseRoom")
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_createpromise)
+        val view = inflater!!.inflate(R.layout.fragment_createpromise, container, false) as View
 
-        mMapView =findViewById(R.id.CreatePromise_Map)
-        tv_Date = findViewById(R.id.CreatePromise_TextView_Date)
-        tv_Friends = findViewById(R.id.CreatePromise_TextView_Participant)
-        tv_Place = findViewById(R.id.CreatePromise_TextView_Place)
-        tv_Time = findViewById(R.id.CreatePromise_TextView_Time)
-        tv_Participant = findViewById(R.id.CreatePromise_TextView_Participant)
 
-        et_ExtraAddress = findViewById(R.id.CreatePromise_EditText_ExtraAddress)
-        et_Content = findViewById(R.id.CreatePromise_EditText_Content)
+        mMapView =view.findViewById(R.id.CreatePromise_Map)
+        tv_Date = view.findViewById(R.id.CreatePromise_TextView_Date)
+        tv_Friends = view.findViewById(R.id.CreatePromise_TextView_Participant)
+        tv_Place = view.findViewById(R.id.CreatePromise_TextView_Place)
+        tv_Time =view.findViewById(R.id.CreatePromise_TextView_Time)
+        tv_Participant = view.findViewById(R.id.CreatePromise_TextView_Participant)
 
-        bu_Date = findViewById(R.id.CreatePromise_Button_Date)
-        bu_Invite = findViewById(R.id.CreatePromise_Button_Invite)
-        bu_Time = findViewById(R.id.CreatePromise_Button_Time)
-        bu_Create = findViewById(R.id.CreatePromise_Button_Create)
+        et_ExtraAddress = view.findViewById(R.id.CreatePromise_EditText_ExtraAddress)
+        et_Content = view.findViewById(R.id.CreatePromise_EditText_Content)
+
+        bu_Date = view.findViewById(R.id.CreatePromise_Button_Date)
+        bu_Invite = view.findViewById(R.id.CreatePromise_Button_Invite)
+        bu_Time = view.findViewById(R.id.CreatePromise_Button_Time)
+        bu_Create = view.findViewById(R.id.CreatePromise_Button_Create)
 
 
         tv_Participant!!.text="지현우,정문경"
@@ -79,7 +89,7 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
 
 
 
-                val dialog = DatePickerDialog(this@CreatePromiseActivity, DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                val dialog = DatePickerDialog(thiscontext, DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
 
                     CreatePromise_TextView_Date.setText(year.toString() + "."+(month + 1).toString() + "."+dayOfMonth.toString())
                 }, 2019, 0, 1)
@@ -95,7 +105,7 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
         bu_Time!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
-                val timePickerDialog = TimePickerDialog(this@CreatePromiseActivity, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                val timePickerDialog = TimePickerDialog(thiscontext, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
 
                     tv_Time!!.text = hourOfDay.toString()+" : "+minute.toString()
 
@@ -103,7 +113,7 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
 
                 timePickerDialog.setMessage("메시지")
                 timePickerDialog.show()
-        }
+            }
         })
 
 
@@ -111,7 +121,18 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
         mMapView!!.setMapViewEventListener(this)
         mMapView!!.setPOIItemEventListener(this)
 
+
+        return view
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
+
+
+
+
 
     override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
 
@@ -153,7 +174,7 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
 
         mMapView!!.addPOIItem(poi)
 
-        val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("4a70536a991d4cd7bd72f612b7ab81b8",poi.mapPoint,this,this)
+        val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("4a70536a991d4cd7bd72f612b7ab81b8",poi.mapPoint,this,thiscontext as Activity)
         reverseGeoCoder.startFindingAddress()
 
 
@@ -209,7 +230,7 @@ class CreatePromiseActivity : AppCompatActivity(), MapView.POIItemEventListener,
     }
 
     private fun onFinishReverseGeoCoding(result: String) {
-        Toast.makeText(this, "Reverse Geo-coding : " + result, Toast.LENGTH_SHORT).show();
+        Toast.makeText(thiscontext, "Reverse Geo-coding : " + result, Toast.LENGTH_SHORT).show();
         tv_Place!!.text = result
     }
 

@@ -1,80 +1,59 @@
 package com.example.wlgusdn.mobile
 
-import android.os.Bundle
-import android.content.Intent
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 
 
-class MainActivity : AppCompatActivity() {
+@SuppressLint("ValidFragment")
+class MainFragment(context : Context) : Fragment() {
 
+    val thiscontext : Context = context
     var bu : Button? = null
 
     private lateinit var navbtn : Button
-    private lateinit var createbtn : Button
+    private lateinit var Promisebtn : Button
     private lateinit var promiseroombtn : Button
     private lateinit var promiselistbtn : Button
 
-    @SuppressLint("ObsoleteSdkInt")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        navbtn = findViewById(R.id.Main_Button_Navi)
-        createbtn = findViewById(R.id.Main_Button_CreatePromise)
-        promiseroombtn = findViewById(R.id.Main_Button_PromiseRoom)
-        promiselistbtn = findViewById(R.id.Main_Button_PromiseList)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+
+        val view = inflater!!.inflate(R.layout.fragment_main, container, false) as View
+
+        navbtn = view.findViewById(R.id.Main_Button_Navi)
+        Promisebtn = view.findViewById(R.id.Main_Button_Promise)
 
         navbtn.setOnClickListener {
-            val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+            val drawer = view.findViewById(R.id.drawer_layout) as DrawerLayout
             if(!drawer.isDrawerOpen(GravityCompat.START)){drawer.openDrawer(GravityCompat.START)}
             else drawer.closeDrawer(GravityCompat.END)
         }
-
-        promiseroombtn.setOnClickListener(object: View.OnClickListener {
+        Promisebtn.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
-                val intent : Intent = Intent(this@MainActivity,ChatRoom::class.java)
-
+                val intent : Intent = Intent(thiscontext,PromiseRoom::class.java)
+                //intent.putExtra("PromiseRoomNumber",)
                 startActivity(intent)
 
             }
         })
 
 
-        createbtn.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
-
-                val intent : Intent = Intent(this@MainActivity,CreatePromiseActivity::class.java)
-
-                startActivity(intent)
-
-            }
-        })
-
-        promiselistbtn.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
-
-                val intent : Intent = Intent(this@MainActivity,PromiseList::class.java)
-
-                startActivity(intent)
-
-            }
-        })
-
-        /*
-        val button_chat : Button = findViewById(R.id.ChatRoom)
 
 
-        button_chat.setOnClickListener {
-            val nextIntent = Intent(this, ChatRoom::class.java)
-            startActivity(nextIntent)
-        }
-*/
+        return view
 
     }
+
+
 
 }

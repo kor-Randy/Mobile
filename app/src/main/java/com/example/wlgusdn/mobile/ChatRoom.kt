@@ -1,6 +1,7 @@
 package com.example.wlgusdn.mobile
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import java.text.SimpleDateFormat
 import java.util.*
@@ -8,33 +9,37 @@ import java.util.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 
 import android.widget.*
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.wlgusdn.mobile.R.id.ChatRoom_RecyclerView
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_chatroom.*
+import kotlinx.android.synthetic.main.fragment_chatroom.*
 
 
-class ChatRoom : AppCompatActivity(){
+@SuppressLint("ValidFragment")
+class ChatRoom(context : Context) : Fragment(){
 
+    var thiscontext = context
     val database = FirebaseDatabase.getInstance().getReference()
     var ChatEditText : EditText? = null
 
-    @SuppressLint("ObsoleteSdkInt")
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater!!.inflate(R.layout.fragment_chatroom, container, false) as View
 
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chatroom)
-
-
-        ChatEditText = findViewById(R.id.ChatRoom_ChatEditText)
+        ChatEditText = view.findViewById(R.id.ChatRoom_ChatEditText)
         //val ChatEditText : EditText = findViewById(R.id.ChatRoom_ChatEditText)
-        val ChatButton : Button = findViewById(R.id.ChatRoom_ChatButton)
+        val ChatButton : Button = view.findViewById(R.id.ChatRoom_ChatButton)
         val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
 
 
-        val GalleryButton : ImageButton = findViewById(R.id.ChatRoom_GalleryButton)
-        val OtherButton : Button = findViewById(R.id.ChatRoom_OtherButton)
+        val GalleryButton : ImageButton = view.findViewById(R.id.ChatRoom_GalleryButton)
+        val OtherButton : Button = view.findViewById(R.id.ChatRoom_OtherButton)
 
 
 
@@ -64,8 +69,9 @@ class ChatRoom : AppCompatActivity(){
             //takePhoto()
 
         }
-
+        return view
     }
+
 
 
     //입력 받은 텍스트 chatList에 추가하기
@@ -75,7 +81,7 @@ class ChatRoom : AppCompatActivity(){
 
         val chatAdapter = Chatroom_ChatAdapter(chatList)
         ChatRoom_RecyclerView.adapter = chatAdapter
-        ChatRoom_RecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        ChatRoom_RecyclerView.layoutManager = LinearLayoutManager(context)
 
         return chatList
     }
@@ -100,7 +106,7 @@ class ChatRoom : AppCompatActivity(){
     fun selectImageInAlbum() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
-        if (intent.resolveActivity(packageManager) != null) {
+        if (intent.resolveActivity(thiscontext.packageManager) != null) {
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
         }
         //ChatEditText?.setText(intent.toString())
@@ -108,7 +114,7 @@ class ChatRoom : AppCompatActivity(){
 
     fun takePhoto() {
         val intent1 = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent1.resolveActivity(packageManager) != null) {
+        if (intent1.resolveActivity(thiscontext.packageManager) != null) {
             startActivityForResult(intent1, REQUEST_TAKE_PHOTO)
         }
     }

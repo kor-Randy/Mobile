@@ -1,18 +1,24 @@
 package com.example.wlgusdn.mobile
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -20,17 +26,22 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.Fragment
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_promiseroom.view.*
+import kotlinx.android.synthetic.main.fragment_createpromise.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 
-class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapView.CurrentLocationEventListener
+@SuppressLint("ValidFragment")
+class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapView.CurrentLocationEventListener
 
 {
+    var thiscontext : Context = context
     val GPS_ENABLE_REQUEST_CODE : Int = 2001
     val PERMISSIONS_REQUEST_CODE : Int = 100
     val REQUIRED_PERMISSIONS : Array<String> = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -42,7 +53,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
 
     var mButtonSearch : Button? = null
     var mEditTextQuery : EditText? = null
-    val mGeocoder : Geocoder = Geocoder(this)
+    val mGeocoder : Geocoder = Geocoder(thiscontext)
     var Text_Participant : TextView? = null
     var Text_Place : TextView? = null
     var Text_Time : TextView? = null
@@ -56,26 +67,22 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
     val ref : DatabaseReference = database.reference
 
 
-    @SuppressLint("ObsoleteSdkInt")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_promiseroom)
-
-        mMapView = findViewById(R.id.PromiseRoom_Map)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater!!.inflate(R.layout.fragment_promiseroom, container, false) as View
 
 
-        Text_Content = findViewById(R.id.PromiseRoom_TextView_Content)
-        Text_Participant = findViewById(R.id.PromiseRoom_TextView_Participant)
-        Text_Place = findViewById(R.id.PromiseRoom_TextView_Place)
-        Text_Time = findViewById(R.id.PromiseRoom_TextView_Time)
+        mMapView = view.findViewById(R.id.PromiseRoom_Map)
+
+
+        Text_Content = view.findViewById(R.id.PromiseRoom_TextView_Content)
+        Text_Participant = view.findViewById(R.id.PromiseRoom_TextView_Participant)
+        Text_Place =view.findViewById(R.id.PromiseRoom_TextView_Place)
+        Text_Time = view.findViewById(R.id.PromiseRoom_TextView_Time)
         //Bu_ChatRoom = findViewById(R.id.PromiseRoom_Button_ChatRoom)
-        val Bu_ChatRoom : Button = findViewById(R.id.PromiseRoom_Button_ChatRoom)
+        val Bu_ChatRoom : Button = view.findViewById(R.id.PromiseRoom_Button_ChatRoom)
 
 
-        Bu_ChatRoom.setOnClickListener {
-            val nextIntent = Intent(this, ChatRoom::class.java)
-            startActivity(nextIntent)
-        }
+
 
 
         //친구들 위치 넣기
@@ -124,7 +131,12 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
 
 
 
+
+
+        return view
     }
+
+
 
     override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
 
@@ -146,7 +158,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
 
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
 
-        Toast.makeText(this@PromiseRoomActivity,p1!!.itemName, Toast.LENGTH_LONG).show()
+        Toast.makeText(thiscontext,p1!!.itemName, Toast.LENGTH_LONG).show()
 
 
         val intent : Intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:01011111111"))
@@ -322,23 +334,23 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
+                                thiscontext as Activity,
                         REQUIRED_PERMISSIONS[0]
                     )
                 ) {
 
                     Toast.makeText(
-                        this@PromiseRoomActivity,
+                            thiscontext,
                         "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.",
                         Toast.LENGTH_LONG
                     ).show()
-                    finish()
+                    (thiscontext as Activity).finish()
 
 
                 } else {
 
                     Toast.makeText(
-                        this@PromiseRoomActivity,
+                            thiscontext,
                         "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ",
                         Toast.LENGTH_LONG
                     ).show()
@@ -354,7 +366,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
         val hasFineLocationPermission = ContextCompat.checkSelfPermission(
-            this@PromiseRoomActivity,
+                thiscontext,
             android.Manifest.permission.ACCESS_FINE_LOCATION
         )
 
@@ -373,17 +385,17 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
 
             // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
             if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@PromiseRoomActivity,
+                            thiscontext as Activity,
                     REQUIRED_PERMISSIONS[0]
                 )
             ) {
 
                 // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-                Toast.makeText(this@PromiseRoomActivity, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG)
+                Toast.makeText(thiscontext, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG)
                     .show()
                 // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
-                    this@PromiseRoomActivity, REQUIRED_PERMISSIONS,
+                        thiscontext as Activity, REQUIRED_PERMISSIONS,
                     PERMISSIONS_REQUEST_CODE
                 )
 
@@ -392,7 +404,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
                 // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
-                    this@PromiseRoomActivity, REQUIRED_PERMISSIONS,
+                        thiscontext as Activity, REQUIRED_PERMISSIONS,
                     PERMISSIONS_REQUEST_CODE
                 )
             }
@@ -404,7 +416,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
     //여기부터는 GPS 활성화를 위한 메소드들
     private fun showDialogForLocationServiceSetting() {
 
-        val builder = AlertDialog.Builder(this@PromiseRoomActivity)
+        val builder = AlertDialog.Builder(thiscontext)
         builder.setTitle("위치 서비스 비활성화")
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" + "위치 설정을 수정하실래요?")
         builder.setCancelable(true)
@@ -438,7 +450,7 @@ class PromiseRoomActivity : AppCompatActivity(), MapView.POIItemEventListener, M
     }
 
     fun checkLocationServicesStatus(): Boolean {
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager = context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
