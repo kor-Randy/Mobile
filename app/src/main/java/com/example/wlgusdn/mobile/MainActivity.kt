@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 
 
 @SuppressLint("ValidFragment")
-class MainFragment(context : Context) : Fragment() {
+class MainActivity(context : Context) : Fragment() {
 
     val thiscontext : Context = context
     var bu : Button? = null
@@ -39,10 +39,10 @@ class MainFragment(context : Context) : Fragment() {
         }
         Promisebtn.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-
+                LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
                 val intent : Intent = Intent(thiscontext,PromiseRoom::class.java)
-                //intent.putExtra("PromiseRoomNumber",)
-                startActivity(intent)
+                intent.putExtra("select",1)
+                startActivityForResult(intent,0)
 
             }
         })
@@ -53,7 +53,6 @@ class MainFragment(context : Context) : Fragment() {
         return view
 
     }
-
 
 
 }

@@ -46,7 +46,6 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     val PERMISSIONS_REQUEST_CODE : Int = 100
     val REQUIRED_PERMISSIONS : Array<String> = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
     val LOG_TAG : String = "MainActivity"
-    var mMapView : MapView? = null
     var clsPoint : ArrayList<MapPoint>? = ArrayList<MapPoint>()
     var myPoint : MapPoint? = null
 
@@ -68,12 +67,11 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_promiseroom, container, false) as View
 
+        val view = inflater!!.inflate(R.layout.fragment_promise, container, false) as View
 
-        mMapView = view.findViewById(R.id.PromiseRoom_Map)
-
-
+        LobbyActivity.PromiseMap = view.findViewById(R.id.PromiseRoom_Map)
+        LobbyActivity.Promisecon = view.findViewById(R.id.Promise_con)
         Text_Content = view.findViewById(R.id.PromiseRoom_TextView_Content)
         Text_Participant = view.findViewById(R.id.PromiseRoom_TextView_Participant)
         Text_Place =view.findViewById(R.id.PromiseRoom_TextView_Place)
@@ -84,11 +82,10 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
 
 
-
         //친구들 위치 넣기
 
-        mMapView!!.setMapViewEventListener(this)
-        mMapView!!.setPOIItemEventListener(this)
+        LobbyActivity.PromiseMap!!.setMapViewEventListener(this)
+        LobbyActivity.PromiseMap!!.setPOIItemEventListener(this)
 
 
 
@@ -104,7 +101,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
          startActivity(intent);*/
 
 
-        mMapView!!.setCurrentLocationEventListener(this)
+        LobbyActivity.PromiseMap!!.setCurrentLocationEventListener(this)
 
         if(!checkLocationServicesStatus())
         {
@@ -168,8 +165,8 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
     override fun onDestroy() {
         super.onDestroy()
-        mMapView!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
-        mMapView!!.setShowCurrentLocationMarker(false);
+        LobbyActivity.PromiseMap!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
+        LobbyActivity.PromiseMap!!.setShowCurrentLocationMarker(false);
     }
     override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
 
@@ -199,7 +196,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
             if(i==0)
             {
-                mMapView!!.removePOIItem(poi1)
+                LobbyActivity.PromiseMap!!.removePOIItem(poi1)
                 poi1.mapPoint= MapPoint.mapPointWithGeoCoord(clsPoint!![i].mapPointGeoCoord.latitude,clsPoint!![i].mapPointGeoCoord.longitude)
                 poi1.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
                 poi1.isShowCalloutBalloonOnTouch=true
@@ -207,11 +204,11 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                 poi1.customImageResourceId = R.drawable.cat
                 poi1.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
 
-                mMapView!!.addPOIItem(poi1)
+                LobbyActivity.PromiseMap!!.addPOIItem(poi1)
             }
             else
             {
-                mMapView!!.removePOIItem(poi2)
+                LobbyActivity.PromiseMap!!.removePOIItem(poi2)
                 poi2.mapPoint= MapPoint.mapPointWithGeoCoord(clsPoint!![i].mapPointGeoCoord.latitude,clsPoint!![i].mapPointGeoCoord.longitude)
                 poi2.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
                 poi2.isShowCalloutBalloonOnTouch=true
@@ -219,7 +216,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                 poi2.customImageResourceId = R.drawable.dog
                 poi2.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.dog
 
-                mMapView!!.addPOIItem(poi2)
+                LobbyActivity.PromiseMap!!.addPOIItem(poi2)
             }
 
 
@@ -245,7 +242,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         poi.customImageResourceId = R.drawable.cat
         poi.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
 
-        mMapView!!.addPOIItem(poi)
+        LobbyActivity.PromiseMap!!.addPOIItem(poi)
     }
 
     override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
@@ -329,7 +326,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
             if (check_result) {
                 Log.d("@@@", "start")
                 //위치 값을 가져올 수 있음
-                mMapView!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
+                LobbyActivity.PromiseMap!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 
@@ -378,7 +375,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
 
             // 3.  위치 값을 가져올 수 있음
-            mMapView!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
+            LobbyActivity.PromiseMap!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
 
 
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.

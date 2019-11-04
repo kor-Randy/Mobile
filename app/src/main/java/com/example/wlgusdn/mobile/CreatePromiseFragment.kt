@@ -7,6 +7,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -17,7 +18,9 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -30,7 +33,7 @@ import net.daum.mf.map.api.MapView
 @SuppressLint("ValidFragment")
 class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
     var thiscontext : Context = context
-   var mMapView : MapView? = null
+
     lateinit  var clsPoint : ArrayList<MapPoint>
     lateinit var bu_Date : Button
     lateinit var bu_Time : Button
@@ -51,8 +54,8 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
         val view = inflater!!.inflate(R.layout.fragment_createpromise, container, false) as View
 
-
-        mMapView =view.findViewById(R.id.CreatePromise_Map)
+        LobbyActivity.Createcon = view.findViewById(R.id.Create_Con)
+        LobbyActivity.CreateMap =view.findViewById(R.id.CreatePromise_Map)
         tv_Date = view.findViewById(R.id.CreatePromise_TextView_Date)
         tv_Friends = view.findViewById(R.id.CreatePromise_TextView_Participant)
         tv_Place = view.findViewById(R.id.CreatePromise_TextView_Place)
@@ -118,15 +121,43 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
 
 
-        mMapView!!.setMapViewEventListener(this)
-        mMapView!!.setPOIItemEventListener(this)
+        LobbyActivity.CreateMap!!.setMapViewEventListener(this)
+        LobbyActivity.CreateMap!!.setPOIItemEventListener(this)
 
 
         return view
     }
 
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Log.d("checkkk","lowmemory")
+
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("checkk","stop")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d("checkkk","destroy")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("checkkk","resume")
+        if(LobbyActivity.refresh==true) {
+
+            val ft = fragmentManager!!.beginTransaction()
+            if (Build.VERSION.SDK_INT >= 26) {
+                ft.setReorderingAllowed(false);
+            }
+            ft.detach(this).attach(this).commit();
+            LobbyActivity.refresh=false
+        }
+
     }
 
 
@@ -172,7 +203,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         poi.customImageResourceId = R.drawable.cat
         poi.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
 
-        mMapView!!.addPOIItem(poi)
+        LobbyActivity.CreateMap!!.addPOIItem(poi)
 
         val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("4a70536a991d4cd7bd72f612b7ab81b8",poi.mapPoint,this,thiscontext as Activity)
         reverseGeoCoder.startFindingAddress()
