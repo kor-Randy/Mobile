@@ -10,6 +10,7 @@ import java.util.Arrays.asList
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import com.example.wlgusdn.mobile.LobbyActivity.Companion.auth
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -22,7 +23,6 @@ import com.google.firebase.auth.FirebaseUser
 
 class LoginActivity : AppCompatActivity()
 {
-    var auth : FirebaseAuth?=null
     var Password : EditText?= null
     var Id : EditText? = null
     var btn_facebook_login : LoginButton?=null

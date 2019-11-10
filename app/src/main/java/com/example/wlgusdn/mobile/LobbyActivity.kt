@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
 import net.daum.mf.map.api.MapView
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -32,20 +33,9 @@ class LobbyActivity : AppCompatActivity()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
-        try {
-            val info = getPackageManager().getPackageInfo("com.example.wlgusdn.mobile", PackageManager.GET_SIGNATURES);
-            for (signature in info.signatures) {
-               val md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch ( e: PackageManager.NameNotFoundException) {
-            e.printStackTrace();
-        } catch ( e: NoSuchAlgorithmException) {
-            e.printStackTrace();
-        }
 
 
+        AccountActivity.Accountac!!.finish()
 
         viewPager = findViewById(R.id.viewpager)
         setupViewPager(viewPager)
@@ -126,6 +116,7 @@ class LobbyActivity : AppCompatActivity()
         var CreateMap : MapView? = null
         var PromiseMap : MapView? = null
         var refresh : Boolean = false
+        var auth : FirebaseAuth?=null
     }
 
 }

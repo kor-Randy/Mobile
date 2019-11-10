@@ -1,8 +1,9 @@
 package com.example.wlgusdn.mobile
 
-class PromiseRoomData(date : String,time : String, address : String, etcaddress : String,content: String,participant: ArrayList<String>)
+class PromiseRoomData(name : String,date : String,time : String, address : String, etcaddress : String,content: String,participant: ArrayList<String>)
 {
 
+    var Name : String? = null
     var Date : String? = null
     var Time : String? = null
     var Address : String? = null
@@ -11,6 +12,7 @@ class PromiseRoomData(date : String,time : String, address : String, etcaddress 
     var Participants : ArrayList<String>? = null
 
     init {
+        Name=name
         Date=date
         Time=time
         Address=address

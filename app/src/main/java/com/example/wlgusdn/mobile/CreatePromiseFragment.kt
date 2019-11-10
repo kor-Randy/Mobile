@@ -22,8 +22,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_createpromise.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
@@ -44,6 +43,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
     lateinit var tv_Friends : TextView
     lateinit var et_ExtraAddress : EditText
     lateinit var et_Content : EditText
+    lateinit var et_Name : EditText
     lateinit var bu_Create : Button
     lateinit var tv_Participant : TextView
 
@@ -61,7 +61,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         tv_Place = view.findViewById(R.id.CreatePromise_TextView_Place)
         tv_Time =view.findViewById(R.id.CreatePromise_TextView_Time)
         tv_Participant = view.findViewById(R.id.CreatePromise_TextView_Participant)
-
+        et_Name = view.findViewById(R.id.CreatePromise_EditText_Name)
         et_ExtraAddress = view.findViewById(R.id.CreatePromise_EditText_ExtraAddress)
         et_Content = view.findViewById(R.id.CreatePromise_EditText_Content)
 
@@ -78,10 +78,71 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
                 val part : ArrayList<String> = tv_Participant!!.text.toString().split(',') as ArrayList<String>
 
-                val PRD : PromiseRoomData = PromiseRoomData(tv_Date!!.text.toString(),tv_Time!!.text.toString(),tv_Place!!.text.toString(),
+                val PRD : PromiseRoomData = PromiseRoomData(et_Name!!.text.toString(),tv_Date!!.text.toString(),tv_Time!!.text.toString(),tv_Place!!.text.toString(),
                         et_ExtraAddress!!.text.toString(),et_Content!!.text.toString(),part)
 
-                myRef.child("PromiseNumber").setValue(PRD)
+                myRef.push().setValue(PRD)
+
+                //여기서 초대한 친구들의 DB에 약속방List에 약속방 번호 추가
+                database.reference.addListenerForSingleValueEvent(object: ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+
+
+                    }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        var p00 = p0
+                        var id : String?=null
+                        var RoomNum : String? = null
+                        for(i in 0..part.size-1)
+                        {
+                             database.reference.child("Account").addListenerForSingleValueEvent(object: ValueEventListener {
+                                 override fun onCancelled(p0: DatabaseError) {
+
+
+                                 }
+
+                                 override fun onDataChange(p0: DataSnapshot) {
+
+                                      for (fileSnapshot in p0.getChildren())
+                                      {
+                                          Log.d("ccheckk",""+fileSnapshot.key)
+                                          if(fileSnapshot.child("name").value.toString().equals(part[i]))
+                                          {
+                                              Log.d("ccheckk","찾음"+fileSnapshot.key)
+                                              id=fileSnapshot.key
+                                              var ud =p0.child(id!!).getValue(UserData::class.java)
+
+                                              /*   while(true)
+                                                 {//Account를 찾아가던 중 내가 찾는 이름을 갖고 있지 않으면 계속해서 찾는다.
+                                                     var aa = p0.child("Account").children.iterator().next()
+                                                     if(aa.child("name").value.toString().equals(part[i]))
+                                                     {
+                                                         Log.d("ccheckk",aa.key.toString())
+                                                     }
+
+                                                 }*/
+
+                                              Log.d("ccheckk",p00.child("PromiseRoom").children.last().key)
+                                              RoomNum = p00.child("PromiseRoom").children.last().key
+
+
+                                              ud!!.Promises!!.add(RoomNum!!)
+                                              database.getReference("Account").child(id!!).setValue(ud)
+                                          }
+                                      }
+                                 }
+                             })
+
+
+
+
+
+
+                        }
+                    }
+                })
+
 
             }
         })
@@ -128,22 +189,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         return view
     }
 
-    override fun onLowMemory() {
-        super.onLowMemory()
-        Log.d("checkkk","lowmemory")
 
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("checkk","stop")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d("checkkk","destroy")
-    }
 
     override fun onResume() {
         super.onResume()
@@ -154,7 +200,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
             if (Build.VERSION.SDK_INT >= 26) {
                 ft.setReorderingAllowed(false);
             }
-            ft.detach(this).attach(this).commit();
+            ft.detach(this).attach(this).commit();//Fragment 재 실행
             LobbyActivity.refresh=false
         }
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -23,7 +24,9 @@ class MainActivity(context : Context) : Fragment() {
     private lateinit var Promisebtn : Button
     private lateinit var promiseroombtn : Button
     private lateinit var promiselistbtn : Button
+    private lateinit var friendbtn : Button
 
+    private lateinit var et : EditText
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
 
@@ -31,6 +34,19 @@ class MainActivity(context : Context) : Fragment() {
 
         navbtn = view.findViewById(R.id.Main_Button_Navi)
         Promisebtn = view.findViewById(R.id.Main_Button_Promise)
+        friendbtn = view.findViewById(R.id.Main_Friend)
+        et = view.findViewById(R.id.Main_et)
+
+        friendbtn.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                //친구추가 팝업
+                val intent : Intent = Intent(thiscontext,FriendPopup::class.java)
+                startActivity(intent)
+
+
+            }
+        })
 
         navbtn.setOnClickListener {
             val drawer = view.findViewById(R.id.drawer_layout) as DrawerLayout

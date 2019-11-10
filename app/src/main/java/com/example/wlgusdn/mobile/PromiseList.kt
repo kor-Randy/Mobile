@@ -32,7 +32,7 @@ class PromiseList() : AppCompatActivity() {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (postSnapshot in dataSnapshot.children){
-                    var data = PromiseRoomData("", "","","","", part)
+                    var data = PromiseRoomData("","", "","","","", part)
                     var roomName = postSnapshot.key.toString()
                     data.Date = dataSnapshot.child(roomName).child("date").value.toString()
                     data.Time = dataSnapshot.child(roomName).child("time").value.toString()
