@@ -17,8 +17,9 @@ import com.google.android.material.tabs.TabLayout
 class PromiseRoom : AppCompatActivity()
 {
     private lateinit var adapter : ViewPagerAdapter
-    internal val tabIcons = intArrayOf(R.drawable.dog,R.drawable.cat)
+    internal val tabIcons = intArrayOf(R.drawable.dog,R.drawable.cat,R.drawable.cat)
     private var viewPager: ViewPager? = null
+    //private var viewPager2: ViewPager? = null
     private var tabLayout: TabLayout? = null
     private var goPromiseRoom : Button? = null
     var intentt : Intent? = null
@@ -29,9 +30,12 @@ class PromiseRoom : AppCompatActivity()
 
         intentt = intent
         viewPager = findViewById(R.id.viewpager1)
+        //viewPager2 = findViewById(R.id.viewpager2)
         setupViewPager(viewPager)
+        //setupViewPager(viewPager2)
         tabLayout = findViewById(R.id.tabs1)
         tabLayout!!.setupWithViewPager(viewPager)
+        //tabLayout!!.setupWithViewPager(viewPager2)
         setupTabIcons()
 
 
@@ -49,6 +53,7 @@ class PromiseRoom : AppCompatActivity()
         adapter = ViewPagerAdapter(supportFragmentManager)
         adapter.addFrag(PromiseRoomActivity(this), "Chat")
         adapter.addFrag(ChatRoom(this), "Chat")
+        adapter.addFrag(PhotoRoom(this), "Photo")
 
         //adapter.addFrag(heart(), "HEART")
         viewPager!!.adapter = adapter

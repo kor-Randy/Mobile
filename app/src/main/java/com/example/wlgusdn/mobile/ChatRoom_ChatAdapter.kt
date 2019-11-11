@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 
 
@@ -37,6 +38,11 @@ class Chatroom_ChatAdapter (chatList : MutableList<ChatRoom_Chat>) : RecyclerVie
             is MyViewHolder -> {
                 p0.myText.text = chat.text
                 p0.myTextTime.text = chat.time
+                if (chat.image != null){
+                    p0.myImage.setImageBitmap(chat.image)
+                    p0.myText.visibility = View.INVISIBLE
+
+                }
 
             }
             is OtherViewHolder ->{
@@ -72,6 +78,7 @@ class Chatroom_ChatAdapter (chatList : MutableList<ChatRoom_Chat>) : RecyclerVie
 
         var myText : TextView = view.findViewById(R.id.ChatRoom_MyText)
         var myTextTime : TextView = view.findViewById(R.id.ChatRoom_MyTextTime)
+        var myImage : ImageView = view.findViewById(R.id.ChatRoom_MyImage)
 
     }
 

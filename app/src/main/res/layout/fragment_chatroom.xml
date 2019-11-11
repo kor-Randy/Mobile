@@ -43,14 +43,15 @@
         app:layout_constraintLeft_toLeftOf="parent">
 
         <Button
-            android:id="@+id/ChatRoom_OtherButton"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:clickable="true"
-            android:gravity="center"
-            android:text="B"
-            android:textSize="14dp" />
+                android:id="@+id/ChatRoom_OtherButton"
+                android:layout_width="64dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:background="#00FFFFFF"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="B"
+                android:textSize="14dp" />
 
         <ImageButton
             android:id="@+id/ChatRoom_GalleryButton"
@@ -77,14 +78,15 @@
             android:maxLines="6"/>
 
         <Button
-            android:id="@+id/ChatRoom_ChatButton"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:clickable="true"
-            android:gravity="center"
-            android:text="ENTER"
-            android:textSize="14dp" />
+                android:id="@+id/ChatRoom_ChatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:background="#00FFFFFF"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="ENTER"
+                android:textSize="14dp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
