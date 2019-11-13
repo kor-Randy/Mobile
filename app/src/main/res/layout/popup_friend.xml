@@ -11,17 +11,17 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/Friend_bu"
+        app:layout_constraintBaseline_toBaselineOf="@+id/Friend_Search"
         app:layout_constraintBottom_toTopOf="@+id/Friend_list"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/Friend_bu"
+        app:layout_constraintRight_toLeftOf="@+id/Friend_Search"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/Friend_bu"
+        android:id="@+id/Friend_Search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="검색"
         app:layout_constraintBottom_toTopOf="@+id/Friend_list"
         app:layout_constraintLeft_toRightOf="@id/Friend_et"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,10 +29,20 @@
 
     <ListView
         android:id="@+id/Friend_list"
-        android:layout_width="368dp"
-        android:layout_height="487dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/Friend_Add"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/Friend_Search" />
+
+    <Button
+        android:id="@+id/Friend_Add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="추가"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/Friend_bu" />
+        app:layout_constraintTop_toBottomOf="@+id/Friend_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -142,8 +142,8 @@ class AccountActivity : AppCompatActivity()
                     {
                         var a : ArrayList<String> = ArrayList<String>()
                         a.add("약속리스트 초기화")
-                        var b : ArrayList<String> = ArrayList<String>()
-                        b.add("친구리스트 초기화")
+                        var b : ArrayList<FriendData> = ArrayList<FriendData>()
+                        b.add(FriendData("친구리스트 초기화",null,null))
                         ud = UserData(et_Name.text.toString(),getPhoneNumber(),b,a,FirebaseInstanceId.getInstance().token!!)
 
                         database.child("Account").child(auth!!.currentUser!!.uid).setValue(ud)
