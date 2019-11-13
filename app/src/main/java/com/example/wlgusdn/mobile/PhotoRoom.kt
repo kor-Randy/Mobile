@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager
 import com.example.wlgusdn.mobile.R.id.ChatRoom_RecyclerView
 import com.facebook.FacebookSdk.getApplicationContext
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_photoroom_grid.view.*
@@ -38,16 +39,35 @@ class PhotoRoom(context : Context) : Fragment(){
     //val photo by lazy {intent.extras[]}
     val database = FirebaseDatabase.getInstance().getReference()
     val storage = FirebaseStorage.getInstance()
+    val storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/")
+    var auth = FirebaseAuth.getInstance()
+
     var gridview: GridView ?= null
     var imageview : ViewPager?= null
     var image: ImageView ?= null
     var view_change : Int = 1
+    val adapter = PhotoRoom_Adapter(PhotoList)
     //val download : Button ?= null
-    var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/")
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_photoroom, container, false) as View
+
+
+
+        auth.signInAnonymously()
+
+        val user = auth.currentUser
+        if (user != null){
+
+        }else{
+            auth.signInAnonymously()
+                .addOnSuccessListener {
+                    Toast.makeText(thiscontext, "signInAnonymously", Toast.LENGTH_LONG).show()
+                }.addOnFailureListener{
+                    Toast.makeText(thiscontext, "signed-fail", Toast.LENGTH_LONG).show()
+                }}
+
 
 
         gridview = view.findViewById(R.id.PhotoRoom_Gridview)
@@ -58,11 +78,82 @@ class PhotoRoom(context : Context) : Fragment(){
         image?.visibility = View.INVISIBLE
         //imageview?.visibility = View.INVISIBLE
 
-        val adapter = PhotoRoom_Adapter(PhotoList)
+        //getlist()
+
+        //val adapter = PhotoRoom_Adapter(PhotoList)
         gridview?.adapter = adapter
-        adapter.notifyDataSetChanged()
+        //adapter.notifyDataSetChanged()
 
 
+
+
+        image?.setOnClickListener {
+            view_change = 1
+            onclick()
+        }
+
+        download.setOnClickListener {
+            when(view_change){
+                1 -> {
+                    storageRef.listAll()
+                        .addOnSuccessListener { listResult ->
+                            listResult.items.forEach { item ->
+                                // All the items under listRef.
+                                //println("download- ${item.name}")
+                                val itemRef = storageRef.child(item.name)
+                                val localFile: File = File.createTempFile(item.name,"jpg")
+
+                                itemRef.getFile(localFile).addOnSuccessListener  {
+                                    println("download- ${item.name}")
+                                    BitmapFactory.decodeFile(localFile.absolutePath)
+                                    Toast.makeText(thiscontext, "downloaded", Toast.LENGTH_LONG).show()
+
+                                }.addOnFailureListener {
+                                    println("download-fail")
+                                    //Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
+                                }.addOnProgressListener {
+                                    val progress = 100.0 * it.bytesTransferred / it.totalByteCount
+
+                                    // percentage in progress
+                                    val intProgress = progress.toInt()
+                                    //tvFileName.text = "Downloaded " + intProgress + "%...
+                                }
+                            }
+                        }
+                        .addOnFailureListener {
+                            println("download-read-fail")
+                            //Toast.makeText(getApplicationContext(), "read-fail", Toast.LENGTH_SHORT).show()
+                        }
+
+                }
+                2 -> {}
+            }
+        }
+
+        return view
+    }
+
+
+
+    private fun resizeBitmap(bitmap: Bitmap): Bitmap {
+        var w : Int = bitmap.width
+        var h : Int = bitmap.height
+        //println("w: ${w}, h: ${h}")
+
+        h = w
+
+        //println("w: ${w}, h: ${h}")
+        return Bitmap.createScaledBitmap(
+            bitmap,
+            w,
+            h,
+            false
+        )
+    }
+
+    fun getlist(){
+        PhotoList.clear()
+        println("getlist")
         storageRef.listAll()
             .addOnSuccessListener { listResult ->
                 listResult.items.forEach { item ->
@@ -78,63 +169,24 @@ class PhotoRoom(context : Context) : Fragment(){
                         adapter.notifyDataSetChanged()
 
                     }.addOnFailureListener {
-                        Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
+                        println("storage-read-fail-each")
+                        //Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(getApplicationContext(), "read-fail", Toast.LENGTH_SHORT).show()
+                println("storage-read-fail")
+                //Toast.makeText(getApplicationContext(), "read-fail", Toast.LENGTH_SHORT).show()
             }
 
-        image?.setOnClickListener {
-            view_change = 1
-            onclick()
-        }
 
-        download.setOnClickListener {
-            when(view_change){
-                1 -> {
-                    storageRef.listAll()
-                        .addOnSuccessListener { listResult ->
-                            listResult.items.forEach { item ->
-                                // All the items under listRef.
-                                println("item ${item.name}")
-                                val localFile: File = File.createTempFile(item.name,"jpg")
-                                item.getFile(localFile).addOnSuccessListener  {
-                                    Toast.makeText(thiscontext, "downloaded", Toast.LENGTH_LONG).show()
-
-                                }.addOnFailureListener {
-                                    Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(getApplicationContext(), "read-fail", Toast.LENGTH_SHORT).show()
-                        }
-
-                }
-                2 -> {}
-            }
-        }
-
-        return view
     }
 
-    private fun resizeBitmap(bitmap: Bitmap): Bitmap {
-        var w : Int = bitmap.width
-        var h : Int = bitmap.height
-        println("w: ${w}, h: ${h}")
-
-        h = w
-
-        println("w: ${w}, h: ${h}")
-        return Bitmap.createScaledBitmap(
-            bitmap,
-            w,
-            h,
-            false
-        )
+    override fun onResume() {
+        super.onResume()
+        getlist()
     }
+
 
 
     fun onclick(){
@@ -154,6 +206,7 @@ class PhotoRoom(context : Context) : Fragment(){
 
         private var photoList : MutableList<PhotoRoom_Photo>? = photoList
         //var context: Context = context
+
 
 
         override fun getCount(): Int {
@@ -184,6 +237,14 @@ class PhotoRoom(context : Context) : Fragment(){
         }
 
     }
+
+    fun refresh() {
+        var transaction = fragmentManager!!.beginTransaction()
+        transaction.detach(this).attach(this).commit()
+
+
+    }
+
 
 
 

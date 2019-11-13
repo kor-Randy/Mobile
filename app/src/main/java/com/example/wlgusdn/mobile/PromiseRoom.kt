@@ -58,6 +58,30 @@ class PromiseRoom : AppCompatActivity()
         //adapter.addFrag(heart(), "HEART")
         viewPager!!.adapter = adapter
         viewPager.offscreenPageLimit= 7         // 한번에 5개의 ViewPager를 띄우겠다 -> 성능향상
+
+
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+            override fun onPageSelected(position: Int) {
+                println("position: ${position}")
+                if(position == 2){
+                    val frag = adapter.getItem(position)
+                    frag.onResume()
+                    //refresh()
+                }
+                //viewPager.adapter?.notifyDataSetChanged()
+
+
+            }
+
+        })
+
     }    //ADAPT FRAGMENT
 
     override fun onBackPressed() {

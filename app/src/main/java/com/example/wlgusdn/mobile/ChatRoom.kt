@@ -36,7 +36,8 @@ import java.lang.Exception
 class ChatRoom(context : Context) : Fragment(){
 
     var thiscontext = context
-    val database = FirebaseDatabase.getInstance().getReference()
+    var database = FirebaseDatabase.getInstance().getReference()
+    var databaseRef = database.child("PromiseRoom").child("-LtJYWniugb5Kx4quYTv")
     var ChatEditText : EditText? = null
     var filePath : Uri? = null
     val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
@@ -111,7 +112,7 @@ class ChatRoom(context : Context) : Fragment(){
 
     private fun writeNewMessage(userId: String, text: String, time: String) {
         val chat : ChatRoom_Chat = ChatRoom_Chat(userId, text, time)
-        database.child("PromiseRoom").child("PromiseNumber").child("chatroom").push().setValue(chat)
+        databaseRef.child("chatroom").push().setValue(chat)
 
 
     }
@@ -187,12 +188,15 @@ class ChatRoom(context : Context) : Fragment(){
     private fun addPhotoDB(who : String, time : String, image : Bitmap){
 
 
-        val photo = PhotoRoom_Photo(who, time, image, image)
-        //database.child("PromiseRoom").child("PromiseNumber").child("photoroom").push().setValue(photo)
+        val photo = PhotoRoom_Photo(who, time, image)
+        databaseRef.child("photoroom").push().setValue(photo)
+        //database.child("PromiseRoom").child("PromiseNumber").child("chatroom").push().setValue(chat)
+
+
 
         if(filePath != null){
             var storage = FirebaseStorage.getInstance()
-            val format = SimpleDateFormat("yyyyMMHHmmss", Locale.getDefault())
+            val format = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
             var now = Date()
             var filename = format.format(now) + "_"+ who + ".jpg"
             var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/" + filename)
