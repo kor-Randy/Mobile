@@ -7,23 +7,46 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.FragmentTransaction
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import net.daum.mf.map.api.MapView
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
-class LobbyActivity : AppCompatActivity()
+class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener
 {
+    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+
+        val eid = p0.itemId
+
+        when(eid)
+        {
+            R.id.Nav_FriendList ->
+            {
+
+            }
+        }
+
+        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        drawer.closeDrawer(GravityCompat.START)
+        return true
+
+    }
+
     private lateinit var adapter : ViewPagerAdapter
     internal val tabIcons = intArrayOf(R.drawable.dog,R.drawable.cat)
     private var viewPager: ViewPager? = null
@@ -47,7 +70,6 @@ class LobbyActivity : AppCompatActivity()
 
     }
 
-
     private fun setupTabIcons() {
         for(i in 0..1) {
             val view1 = layoutInflater.inflate(R.layout.customtab, null) as View
@@ -56,6 +78,7 @@ class LobbyActivity : AppCompatActivity()
         }
 
     }
+
 
     private fun setupViewPager(viewPager: ViewPager?) {
         adapter = ViewPagerAdapter(supportFragmentManager)
@@ -117,6 +140,5 @@ class LobbyActivity : AppCompatActivity()
         var PromiseMap : MapView? = null
         var refresh : Boolean = false
         var auth : FirebaseAuth?=null
-    }
-
+        }
 }

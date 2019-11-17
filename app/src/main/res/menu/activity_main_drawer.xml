@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view"
     >
-    <item  android:id="@+id/Nav_Alram_Setting"
-        android:title="알림설정">
+    <item  android:id="@+id/Nav_FriendList"
+        android:title="친구목록">
 
     </item>
     <item   android:id="@+id/Nav_Recommend"
@@ -17,22 +17,7 @@
         android:title="회원탈퇴">
 
     </item>
-    <item android:title="이용관련">
-        <menu>
-            <item
-                android:id="@+id/nav_Chat"
-                android:title="메일문의" />
-            <item
-                android:id="@+id/nav_Information"
-                android:title="이용약관" />
-            <item
-                android:id="@+id/nav_QnA"
-                android:title="자주묻는질문" />
-            <item
-                android:id="@+id/nav_AppInformation"
-                android:title="앱정보" />
-        </menu>
-    </item>
+
 
 
 

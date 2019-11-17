@@ -32,11 +32,11 @@ import net.daum.mf.map.api.MapView
 @SuppressLint("ValidFragment")
 class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
     var thiscontext : Context = context
-
+    val CheckFriendList = 0
     lateinit  var clsPoint : ArrayList<MapPoint>
-    lateinit var bu_Date : Button
-    lateinit var bu_Time : Button
-    lateinit var bu_Invite : Button
+    lateinit var bu_Date : TextView
+    lateinit var bu_Time : TextView
+    lateinit var bu_Invite : TextView
     lateinit var tv_Place : TextView
     lateinit var tv_Date : TextView
     lateinit var tv_Time : TextView
@@ -46,6 +46,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
     lateinit var et_Name : EditText
     lateinit var bu_Create : Button
     lateinit var tv_Participant : TextView
+    var arr : ArrayList<FriendData>?=null
 
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
     val myRef : DatabaseReference = database.getReference("PromiseRoom")
@@ -71,32 +72,26 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Create = view.findViewById(R.id.CreatePromise_Button_Create)
 
 
-        tv_Participant!!.text="지현우,정문경"
+        tv_Participant!!.hint="지현우,연송희,이유리"
 
         bu_Create!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
-                val part : ArrayList<String> = tv_Participant!!.text.toString().split(',') as ArrayList<String>
 
                 val PRD : PromiseRoomData = PromiseRoomData(et_Name!!.text.toString(),tv_Date!!.text.toString(),tv_Time!!.text.toString(),tv_Place!!.text.toString(),
-                        et_ExtraAddress!!.text.toString(),et_Content!!.text.toString(),part)
+                        et_ExtraAddress!!.text.toString(),et_Content!!.text.toString(),arr!!)
 
+                PRD.Participants!!.add(0,FriendData(AccountActivity.myname!!,null,LobbyActivity.auth!!.currentUser!!.uid))
                 myRef.push().setValue(PRD)
 
                 //여기서 초대한 친구들의 DB에 약속방List에 약속방 번호 추가
-                database.reference.addListenerForSingleValueEvent(object: ValueEventListener {
-                    override fun onCancelled(p0: DatabaseError) {
 
 
-                    }
 
-                    override fun onDataChange(p0: DataSnapshot) {
-                        var p00 = p0
-                        var id : String?=null
                         var RoomNum : String? = null
-                        for(i in 0..part.size-1)
+                        for(i in 0..arr!!.size-1)
                         {
-                             database.reference.child("Account").addListenerForSingleValueEvent(object: ValueEventListener {
+                             database.reference.addListenerForSingleValueEvent(object: ValueEventListener {
                                  override fun onCancelled(p0: DatabaseError) {
 
 
@@ -104,14 +99,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
                                  override fun onDataChange(p0: DataSnapshot) {
 
-                                      for (fileSnapshot in p0.getChildren())
-                                      {
-                                          Log.d("ccheckk",""+fileSnapshot.key)
-                                          if(fileSnapshot.child("name").value.toString().equals(part[i]))
-                                          {
-                                              Log.d("ccheckk","찾음"+fileSnapshot.key)
-                                              id=fileSnapshot.key
-                                              var ud =p0.child(id!!).getValue(UserData::class.java)
+                                              var ud =p0.child("Account").child(arr!![i].Id!!).getValue(UserData::class.java)
 
                                               /*   while(true)
                                                  {//Account를 찾아가던 중 내가 찾는 이름을 갖고 있지 않으면 계속해서 찾는다.
@@ -123,15 +111,15 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
                                                  }*/
 
-                                              Log.d("ccheckk",p00.child("PromiseRoom").children.last().key)
-                                              RoomNum = p00.child("PromiseRoom").children.last().key
+                                              Log.d("ccheckk",p0.child("PromiseRoom").children.last().key)
+                                              RoomNum = p0.child("PromiseRoom").children.last().key
 
 
                                               ud!!.Promises!!.add(RoomNum!!)
-                                              database.getReference("Account").child(id!!).setValue(ud)
+                                              database.getReference("Account").child(arr!![i].Id!!).setValue(ud)
                                           }
-                                      }
-                                 }
+
+
                              })
 
 
@@ -144,8 +132,6 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
                 })
 
 
-            }
-        })
 
         bu_Date!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
@@ -180,7 +166,20 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
             }
         })
 
+    bu_Invite.setOnClickListener(object: View.OnClickListener {
+        override fun onClick(v: View?) {
 
+
+                    //친구추가 팝업
+                    val intent : Intent = Intent(thiscontext,FriendList::class.java)
+                    startActivityForResult(intent, CheckFriendList)
+
+
+
+
+
+        }
+    })
 
         LobbyActivity.CreateMap!!.setMapViewEventListener(this)
         LobbyActivity.CreateMap!!.setPOIItemEventListener(this)
@@ -188,6 +187,24 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
         return view
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode== CheckFriendList)
+        {
+           arr = data!!.getParcelableArrayListExtra<FriendData>("arr")
+            Log.d("ccheckk",arr.toString())
+            var str : String=""
+            for(i in 0..arr!!.size-1)
+            {
+                str += arr!![i].Name+","
+            }
+            tv_Participant.text = str
+
+        }
+    }
+
 
 
 

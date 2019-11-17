@@ -48,6 +48,7 @@ class FriendListAdapter(data: ArrayList<FriendData>?) : BaseAdapter() {
         var convertView = convertView
         if (convertView == null) {
             val context = parent.context
+
             if (inflater == null) {
                 inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             }

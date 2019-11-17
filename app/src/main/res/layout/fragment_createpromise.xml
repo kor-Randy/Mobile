@@ -16,7 +16,8 @@
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread_inside">
 
 
     </net.daum.mf.map.api.MapView>
@@ -25,7 +26,8 @@
         android:id="@+id/CreatePromise_Linear"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/CreatePromise_Button_Create"
         app:layout_constraintHeight_percent="0.3"
@@ -169,11 +171,13 @@
                 tools:layout_editor_absoluteX="364dp"
                 tools:layout_editor_absoluteY="301dp" />
 
-            <Button
+            <TextView
                 android:id="@+id/CreatePromise_Button_Date"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/border_textview_1"
                 android:text="날짜선택" />
         </LinearLayout>
 
@@ -202,15 +206,17 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border_textview"
-                android:textSize="20sp"
                 android:gravity="center"
-                android:hint="시간선택" />
+                android:hint="시간선택"
+                android:textSize="20sp" />
 
-            <Button
+            <TextView
                 android:id="@+id/CreatePromise_Button_Time"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@drawable/border_textview_1"
+                android:gravity="center"
                 android:text="시간" />
         </LinearLayout>
 
@@ -226,9 +232,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
 
+                android:background="@drawable/border_textview"
                 android:gravity="center"
                 android:text="참여자"
-                android:background="@drawable/border_textview"
                 android:textSize="20sp"
                 tools:layout_editor_absoluteX="20dp"
                 tools:layout_editor_absoluteY="320dp" />
@@ -246,11 +252,13 @@
                 tools:layout_editor_absoluteX="364dp"
                 tools:layout_editor_absoluteY="338dp" />
 
-            <Button
+            <TextView
                 android:id="@+id/CreatePromise_Button_Invite"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@drawable/border_textview_1"
+                android:gravity="center"
                 android:text="+" />
         </LinearLayout>
 

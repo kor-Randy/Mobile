@@ -77,6 +77,7 @@ class AccountActivity : AppCompatActivity()
                 Log.d("checkkk",p0.child(et_Name.text.toString()).value.toString())
                 if(p0.child(auth!!.currentUser!!.uid).exists())
                 {
+                    myname = p0.child(auth!!.currentUser!!.uid).child("name").value.toString()
                     val intent : Intent = Intent(this@AccountActivity,LobbyActivity::class.java)
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
@@ -309,6 +310,7 @@ class AccountActivity : AppCompatActivity()
     companion object
     {
         var Accountac : Activity?=null
+        var myname : String?=null
     }
 
 }
