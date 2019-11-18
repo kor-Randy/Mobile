@@ -23,9 +23,16 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.LinkObject
+import com.kakao.message.template.TextTemplate
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
 import net.daum.mf.map.api.MapView
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.HashMap
 
 class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener
 {
@@ -37,6 +44,32 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
         {
             R.id.Nav_FriendList ->
             {
+
+            }
+            R.id.Nav_Recommend ->
+            {
+                var params = TextTemplate
+                        .newBuilder("약속방 만들었다", LinkObject.newBuilder().setAndroidExecutionParams("https://play.google.com/store/apps/details?id=com.test.moon.bblind").build()).build()
+
+                var serverCallbackArgs  = HashMap<String, String>();
+                var aa : Map<Any,Any> = HashMap<Any,Any>()
+
+                //serverCallbackArgs.put("user_id", MainActivity.Myuid!!);
+
+                var aaa  = object : ResponseCallback<KakaoLinkResponse>(){
+                    override fun onSuccess(result: KakaoLinkResponse?) {
+
+                        Log.d("ststst","성공")
+
+                    }
+
+                    override fun onFailure(errorResult: ErrorResult?) {
+
+                    }
+
+                }
+
+                KakaoLinkService.getInstance().sendDefault(LoginActivity.logincontext, params, serverCallbackArgs,aaa)
 
             }
         }

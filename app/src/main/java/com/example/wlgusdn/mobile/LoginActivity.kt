@@ -1,5 +1,6 @@
 package com.example.wlgusdn.mobile
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import java.util.*
 import java.util.Arrays.asList
 import android.content.Intent
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.example.wlgusdn.mobile.LobbyActivity.Companion.auth
 import com.facebook.AccessToken
@@ -19,6 +21,18 @@ import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.kakao.auth.ISessionCallback
+import com.kakao.auth.Session
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.LinkObject
+import com.kakao.message.template.TextTemplate
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
+import com.kakao.usermgmt.UserManagement
+import com.kakao.usermgmt.callback.MeV2ResponseCallback
+import com.kakao.usermgmt.response.MeV2Response
+import com.kakao.util.exception.KakaoException
 
 
 class LoginActivity : AppCompatActivity()
@@ -26,14 +40,18 @@ class LoginActivity : AppCompatActivity()
     var Password : EditText?= null
     var Id : EditText? = null
     var btn_facebook_login : LoginButton?=null
+    var btn_kakao_login : com.kakao.usermgmt.LoginButton?=null
     var mLoginCallback : LoginCallback?=null
     var mCallbackManager : CallbackManager?=null
+
+    private var callback: SessionCallback = SessionCallback()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
 
+        logincontext=this@LoginActivity
         Password=findViewById(R.id.Login_Edit_Password)
         Id = findViewById(R.id.Login_Edit_Id)
         mCallbackManager = CallbackManager.Factory.create()
@@ -41,7 +59,7 @@ class LoginActivity : AppCompatActivity()
         mLoginCallback = LoginCallback()
         auth=FirebaseAuth.getInstance()
 
-
+        Session.getCurrentSession().addCallback(callback)
 
         btn_facebook_login = findViewById(R.id.Login_FaceLogin) as LoginButton
 
@@ -65,13 +83,25 @@ class LoginActivity : AppCompatActivity()
             }
         })
 
+
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        mCallbackManager!!.onActivityResult(requestCode, resultCode, data)
+
 
         super.onActivityResult(requestCode, resultCode, data)
+
+        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
+            Log.d("kkaaoo", "session get current session")
+            return
+        }
+        else
+        {
+            mCallbackManager!!.onActivityResult(requestCode, resultCode, data)
+        }
 
 
 
@@ -103,7 +133,7 @@ class LoginActivity : AppCompatActivity()
 
     }
 
-    override fun onStart() { //로그인유저되있는 유저를 확인함
+    /*override fun onStart() { //로그인유저되있는 유저를 확인함
         super.onStart()
         val currentUser = auth!!.currentUser
 
@@ -113,7 +143,7 @@ class LoginActivity : AppCompatActivity()
         }
 
 
-    }
+    }*/
 
     fun gogo(current : FirebaseUser?)
     {
@@ -126,5 +156,75 @@ class LoginActivity : AppCompatActivity()
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Session.getCurrentSession().removeCallback(callback);
+    }
 
+
+
+    private class SessionCallback : ISessionCallback {
+        override fun onSessionOpenFailed(exception: KakaoException?) {
+            Log.d("kkaaoo","Session Call back :: onSessionOpenFailed: ${exception?.message}")
+        }
+
+        override fun onSessionOpened() {
+            UserManagement.getInstance().me(object : MeV2ResponseCallback() {
+
+                override fun onFailure(errorResult: ErrorResult?) {
+                    Log.d("kkaaoo","Session Call back :: on failed ${errorResult?.errorMessage}")
+                }
+
+                override fun onSessionClosed(errorResult: ErrorResult?) {
+                    Log.d("kkaaoo","Session Call back :: onSessionClosed ${errorResult?.errorMessage}")
+
+                }
+
+                override fun onSuccess(result: MeV2Response?) {
+                    checkNotNull(result) {
+
+                        "session response null" }
+                    Log.d("kkaaoo","Success"+result!!.id)
+
+                    var id = Session.getCurrentSession().accessToken
+
+
+
+                   /* auth!!.signInWithCustomToken(id).addOnCompleteListener { task ->
+
+
+                         Log.d("kkaaoo","signinwithcustomtokensussess")
+                            val intent = Intent(logincontext, AccountActivity::class.java)
+                            logincontext!!.startActivity(intent)
+
+
+                    }*/
+                    auth!!.signInAnonymously().addOnCompleteListener { task ->
+                        val user=auth!!.currentUser
+
+                        Log.d("kkaaoo",user!!.uid)
+                        val intent  = Intent(logincontext,AccountActivity::class.java)
+                        logincontext!!.startActivity(intent)
+
+                    }
+
+                    // register or login
+                }
+
+            })
+
+
+
+
+
+
+
+
+        }
+
+    }
+companion object
+{
+    var logincontext : Context?=null
+}
 }

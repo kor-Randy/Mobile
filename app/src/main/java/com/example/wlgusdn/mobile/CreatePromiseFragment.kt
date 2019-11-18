@@ -23,11 +23,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.database.*
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.LinkObject
+import com.kakao.message.template.TextTemplate
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
 import kotlinx.android.synthetic.main.fragment_createpromise.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
+import java.util.HashMap
 
 @SuppressLint("ValidFragment")
 class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
@@ -77,12 +84,13 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Create!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
+                arr!!.add(0,FriendData(AccountActivity.myname!!,null,LobbyActivity.auth!!.currentUser!!.uid))
+
 
                 val PRD : PromiseRoomData = PromiseRoomData(et_Name!!.text.toString(),tv_Date!!.text.toString(),tv_Time!!.text.toString(),tv_Place!!.text.toString(),
                         et_ExtraAddress!!.text.toString(),et_Content!!.text.toString(),arr!!)
 
-                PRD.Participants!!.add(0,FriendData(AccountActivity.myname!!,null,LobbyActivity.auth!!.currentUser!!.uid))
-                myRef.push().setValue(PRD)
+               myRef.push().setValue(PRD)
 
                 //여기서 초대한 친구들의 DB에 약속방List에 약속방 번호 추가
 
@@ -128,7 +136,12 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
 
                         }
-                    }
+
+
+
+
+
+            }
                 })
 
 
