@@ -133,7 +133,7 @@ class LoginActivity : AppCompatActivity()
 
     }
 
-    /*override fun onStart() { //로그인유저되있는 유저를 확인함
+    override fun onStart() { //로그인유저되있는 유저를 확인함
         super.onStart()
         val currentUser = auth!!.currentUser
 
@@ -143,7 +143,7 @@ class LoginActivity : AppCompatActivity()
         }
 
 
-    }*/
+    }
 
     fun gogo(current : FirebaseUser?)
     {

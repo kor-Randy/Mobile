@@ -36,6 +36,44 @@ import java.util.HashMap
 
 class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener
 {
+    lateinit var navbtn : Button
+    private lateinit var adapter : ViewPagerAdapter
+    internal val tabIcons = intArrayOf(R.drawable.dog,R.drawable.cat)
+    private var viewPager: ViewPager? = null
+    private var tabLayout: TabLayout? = null
+    private var goPromiseRoom : Button? = null
+
+
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_lobby)
+
+
+        val navigationView = findViewById(R.id.nav_view) as NavigationView
+        navigationView.setNavigationItemSelectedListener(this)
+
+        navbtn = findViewById(R.id.Main_Button_Navi)
+
+        navbtn.setOnClickListener {
+            val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+            if(!drawer.isDrawerOpen(GravityCompat.START)){drawer.openDrawer(GravityCompat.START)}
+            else drawer.closeDrawer(GravityCompat.END)
+        }
+
+        AccountActivity.Accountac!!.finish()
+
+        viewPager = findViewById(R.id.viewpager)
+        setupViewPager(viewPager)
+        tabLayout = findViewById(R.id.tabs)
+        tabLayout!!.setupWithViewPager(viewPager)
+        setupTabIcons()
+
+
+
+    }
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
 
         val eid = p0.itemId
@@ -79,30 +117,6 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
         return true
 
     }
-
-    private lateinit var adapter : ViewPagerAdapter
-    internal val tabIcons = intArrayOf(R.drawable.dog,R.drawable.cat)
-    private var viewPager: ViewPager? = null
-    private var tabLayout: TabLayout? = null
-    private var goPromiseRoom : Button? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_lobby)
-
-
-        AccountActivity.Accountac!!.finish()
-
-        viewPager = findViewById(R.id.viewpager)
-        setupViewPager(viewPager)
-        tabLayout = findViewById(R.id.tabs)
-        tabLayout!!.setupWithViewPager(viewPager)
-        setupTabIcons()
-
-
-
-    }
-
     private fun setupTabIcons() {
         for(i in 0..1) {
             val view1 = layoutInflater.inflate(R.layout.customtab, null) as View

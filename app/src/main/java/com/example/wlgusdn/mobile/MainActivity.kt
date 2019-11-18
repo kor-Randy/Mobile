@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -12,15 +14,22 @@ import android.widget.EditText
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.google.android.material.navigation.NavigationView
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.LinkObject
+import com.kakao.message.template.TextTemplate
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
+import java.util.HashMap
 
 
 @SuppressLint("ValidFragment")
-class MainActivity(context : Context) : Fragment() {
+class MainActivity(context : Context) : Fragment(){
 
     val thiscontext : Context = context
     var bu : Button? = null
 
-    private lateinit var navbtn : Button
     private lateinit var Promisebtn : Button
     private lateinit var promiseroombtn : Button
     private lateinit var promiselistbtn : Button
@@ -32,7 +41,13 @@ class MainActivity(context : Context) : Fragment() {
 
         val view = inflater!!.inflate(R.layout.fragment_main, container, false) as View
 
-        navbtn = view.findViewById(R.id.Main_Button_Navi)
+
+
+
+
+
+
+
         Promisebtn = view.findViewById(R.id.Main_Button_Promise)
         friendbtn = view.findViewById(R.id.Main_Friend)
         et = view.findViewById(R.id.Main_et)
@@ -48,11 +63,7 @@ class MainActivity(context : Context) : Fragment() {
             }
         })
 
-        navbtn.setOnClickListener {
-            val drawer = view.findViewById(R.id.drawer_layout) as DrawerLayout
-            if(!drawer.isDrawerOpen(GravityCompat.START)){drawer.openDrawer(GravityCompat.START)}
-            else drawer.closeDrawer(GravityCompat.END)
-        }
+
         Promisebtn.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
@@ -69,6 +80,8 @@ class MainActivity(context : Context) : Fragment() {
         return view
 
     }
+
+
 
 
 
