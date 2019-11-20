@@ -16,17 +16,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="회원가입"
-            android:textSize="60sp"
+            android:textSize="50sp"
             android:gravity="center"/>
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/text_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="프로필 사진을 선택해주세요"
-        android:textSize="15sp"/>
+        android:gravity="center_horizontal"
+        android:text="프로필 사진을 설정해주세요"
+        android:textSize="20sp"/>
 
     <ImageView
         android:id="@+id/Account_Image"

@@ -38,7 +38,7 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
 {
     lateinit var navbtn : Button
     private lateinit var adapter : ViewPagerAdapter
-    internal val tabIcons = intArrayOf(R.drawable.dog,R.drawable.cat)
+    internal val tabIcons = intArrayOf(R.drawable.calendar,R.drawable.add)
     private var viewPager: ViewPager? = null
     private var tabLayout: TabLayout? = null
     private var goPromiseRoom : Button? = null
@@ -181,11 +181,11 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
     companion object
     {
         var CreatFrag : Fragment?=null
-           var Createcon : ConstraintLayout?=null
+        var Createcon : ConstraintLayout?=null
         var Promisecon : ConstraintLayout?=null
         var CreateMap : MapView? = null
         var PromiseMap : MapView? = null
         var refresh : Boolean = false
         var auth : FirebaseAuth?=null
-        }
+    }
 }

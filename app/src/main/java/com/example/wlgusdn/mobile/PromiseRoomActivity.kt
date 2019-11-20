@@ -77,7 +77,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         Text_Place =view.findViewById(R.id.PromiseRoom_TextView_Place)
         Text_Time = view.findViewById(R.id.PromiseRoom_TextView_Time)
         //Bu_ChatRoom = findViewById(R.id.PromiseRoom_Button_ChatRoom)
-        val Bu_ChatRoom : Button = view.findViewById(R.id.PromiseRoom_Button_ChatRoom)
+        //val Bu_ChatRoom : Button = view.findViewById(R.id.PromiseRoom_Button_ChatRoom)
 
 
 
@@ -142,9 +142,9 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     }
 
     override fun onCalloutBalloonOfPOIItemTouched(
-        p0: MapView?,
-        p1: MapPOIItem?,
-        p2: MapPOIItem.CalloutBalloonButtonType?
+            p0: MapView?,
+            p1: MapPOIItem?,
+            p2: MapPOIItem.CalloutBalloonButtonType?
     ) {
 
     }
@@ -174,13 +174,13 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
         val mapPointGeo = p1!!.getMapPointGeoCoord()
         Log.i(
-            LOG_TAG,
-            String.format(
-                "MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)",
-                mapPointGeo.latitude,
-                mapPointGeo.longitude,
-                p2
-            )
+                LOG_TAG,
+                String.format(
+                        "MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)",
+                        mapPointGeo.latitude,
+                        mapPointGeo.longitude,
+                        p2
+                )
         )
 
         clsPoint!!.add( MapPoint.mapPointWithGeoCoord(mapPointGeo.latitude-0.001,mapPointGeo.longitude-0.001))
@@ -298,9 +298,9 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
      * ActivityCompat.requestPermissions를 사용한 퍼미션 요청의 결과를 리턴받는 메소드입니다.
      */
     override fun onRequestPermissionsResult(
-        permsRequestCode: Int,
-        permissions: Array<String>,
-        grandResults: IntArray
+            permsRequestCode: Int,
+            permissions: Array<String>,
+            grandResults: IntArray
     ) {
 
 
@@ -332,14 +332,14 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
                                 thiscontext as Activity,
-                        REQUIRED_PERMISSIONS[0]
-                    )
+                                REQUIRED_PERMISSIONS[0]
+                        )
                 ) {
 
                     Toast.makeText(
                             thiscontext,
-                        "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.",
-                        Toast.LENGTH_LONG
+                            "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.",
+                            Toast.LENGTH_LONG
                     ).show()
                     (thiscontext as Activity).finish()
 
@@ -348,8 +348,8 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
                     Toast.makeText(
                             thiscontext,
-                        "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ",
-                        Toast.LENGTH_LONG
+                            "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ",
+                            Toast.LENGTH_LONG
                     ).show()
 
                 }
@@ -364,7 +364,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
         val hasFineLocationPermission = ContextCompat.checkSelfPermission(
                 thiscontext,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION
         )
 
 
@@ -383,17 +383,17 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
             // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                             thiscontext as Activity,
-                    REQUIRED_PERMISSIONS[0]
-                )
+                            REQUIRED_PERMISSIONS[0]
+                    )
             ) {
 
                 // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
                 Toast.makeText(thiscontext, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG)
-                    .show()
+                        .show()
                 // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
                         thiscontext as Activity, REQUIRED_PERMISSIONS,
-                    PERMISSIONS_REQUEST_CODE
+                        PERMISSIONS_REQUEST_CODE
                 )
 
 
@@ -402,7 +402,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
                         thiscontext as Activity, REQUIRED_PERMISSIONS,
-                    PERMISSIONS_REQUEST_CODE
+                        PERMISSIONS_REQUEST_CODE
                 )
             }
 
@@ -419,11 +419,11 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         builder.setCancelable(true)
         builder.setPositiveButton("설정", DialogInterface.OnClickListener { dialog, id ->
             val callGPSSettingIntent =
-                Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE)
         })
         builder.setNegativeButton("취소",
-            DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
         builder.create().show()
     }
 
@@ -450,7 +450,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         val locationManager = context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
+                LocationManager.NETWORK_PROVIDER
         )
     }
 

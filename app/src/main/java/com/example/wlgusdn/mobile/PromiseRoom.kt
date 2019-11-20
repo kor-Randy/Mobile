@@ -17,7 +17,7 @@ import com.google.android.material.tabs.TabLayout
 class PromiseRoom : AppCompatActivity()
 {
     private lateinit var adapter : ViewPagerAdapter
-    internal val tabIcons = intArrayOf(R.drawable.dog,R.drawable.cat,R.drawable.cat)
+    internal val tabIcons = intArrayOf(R.drawable.promiseroom,R.drawable.chat,R.drawable.picture)
     private var viewPager: ViewPager? = null
     //private var viewPager2: ViewPager? = null
     private var tabLayout: TabLayout? = null
