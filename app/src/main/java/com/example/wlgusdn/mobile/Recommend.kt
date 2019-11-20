@@ -27,6 +27,14 @@ class Recommend : AppCompatActivity(){
     var RecommendList_rest : MutableList<Recommend_Data> = arrayListOf()
     var RecommendList_tour : MutableList<Recommend_Data> = arrayListOf()
     var RecommendList_fest : MutableList<Recommend_Data> = arrayListOf()
+
+    //var position by lazy {intent.extras["location"] as String}
+
+    val position by lazy {intent.extras["location"] as String}
+
+
+
+
     //관광지 12
     //문화시 14
     //공연 축제 15
@@ -34,25 +42,11 @@ class Recommend : AppCompatActivity(){
     //쇼핑 38
     //레포츠 28
     //var type : Int = 76
-    val apiurl : String = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList" +
-            "?ServiceKey=HzlbF03lF%2B1P9hi9YUvJwHH4b0IMjI%2F2Ev4JwX1%2BNhSBqzYCBZbg4HluegctzanEHcxai9B9vWTPvciEupnjOA%3D%3D" +
-            "&numOfRows=100" +
-            "&pageSize=10" +
-            "&pageNo=1" +
-            "&startPage=1" +
-            "&MobileOS=AND" +
-            "&MobileApp=AppTest" +
-            "&listYN=Y" +
-            "&arrange=P" +
-            "&mapX=126.981611" +
-            "&mapY=37.568477" +
-            "&radius=1000" +
-            //"&contentId=336061" +
-            //"&contentTypeId=" + type.toString() +
-            "&_type=json"
+    var apiurl : String = ""
 
 
     //var imagebitmap : Bitmap ?= null
+
 
     @SuppressLint("ObsoleteSdkInt")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +63,35 @@ class Recommend : AppCompatActivity(){
         val tour : Button = findViewById(R.id.Recommend_tour)
         val festival : Button = findViewById(R.id.Recommend_festival)
 
+        //println("latitude only  ${latitude}, long ${longitude}")
+        println("position ${position.split(",")[0]}   ${position.split(",")[1]}")
         //Download.execute(apiurl)
+
+        val latitude : String = position.split(",")[0]
+        val longitude : String = position.split(",")[1]
+
+
+        apiurl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList" +
+        "?ServiceKey=HzlbF03lF%2B1P9hi9YUvJwHH4b0IMjI%2F2Ev4JwX1%2BNhSBqzYCBZbg4HluegctzanEHcxai9B9vWTPvciEupnjOA%3D%3D" +
+                "&numOfRows=100" +
+                "&pageSize=10" +
+                "&pageNo=1" +
+                "&startPage=1" +
+                "&MobileOS=AND" +
+                "&MobileApp=AppTest" +
+                "&listYN=Y" +
+                "&arrange=P" +
+                "&mapX=" + longitude+
+                "&mapY=" + latitude+
+                //"&mapX=126.981611" +
+                //"&mapY=37.568477" +
+                "&radius=1000" +
+                //"&contentId=336061" +
+                //"&contentTypeId=" + type.toString() +
+                "&_type=json"
+
+
+
 
         getlist()
 
@@ -339,6 +361,17 @@ class Recommend : AppCompatActivity(){
 
 
     object Download : AsyncTask<String, Int, String>()  {
+        override fun onPreExecute() {
+            super.onPreExecute()
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+        }
+
+        override fun onProgressUpdate(vararg values: Int?) {
+            super.onProgressUpdate(*values)
+        }
         override fun doInBackground(vararg params: String): String? {
             var output : String ?= null
             try {

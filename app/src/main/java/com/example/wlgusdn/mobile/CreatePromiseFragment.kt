@@ -79,12 +79,13 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Create = view.findViewById(R.id.CreatePromise_Button_Create)
 
 
+        /*
         val button_reco : Button = view.findViewById(R.id.CreatePromiseRoom_recommend)
 
         button_reco.setOnClickListener {
             val nextIntent = Intent(activity, Recommend::class.java)
             startActivity(nextIntent)
-        }
+        }*/
 
 
 
@@ -269,7 +270,22 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
     }
 
-    override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+    override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem) {
+
+        val poi : MapPOIItem = p1
+        val latitude = poi.mapPoint.mapPointGeoCoord.latitude
+        val longitude = poi.mapPoint.mapPointGeoCoord.longitude
+        val position : String = latitude.toString() + "," + longitude.toString()
+
+        println("latitude ${latitude}, longitude ${longitude}")
+
+        val nextIntent = Intent(activity, Recommend::class.java)
+        nextIntent.putExtra("location", position)
+        startActivity(nextIntent)
+
+
+
+
 
 
     }
@@ -282,14 +298,16 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
         var poi : MapPOIItem = MapPOIItem()
 
-        poi.itemName = "click위치"
+        poi.itemName = "장소 추천"
         poi.mapPoint= MapPoint.mapPointWithGeoCoord(p1!!.mapPointGeoCoord.latitude,p1!!.mapPointGeoCoord.longitude)
-        poi.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
+        poi.markerType = MapPOIItem.MarkerType.CustomImage
         poi.isShowCalloutBalloonOnTouch=true
         poi.customImageResourceId = R.drawable.cat
         poi.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
 
         LobbyActivity.CreateMap!!.addPOIItem(poi)
+
+
 
         val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("4a70536a991d4cd7bd72f612b7ab81b8",poi.mapPoint,this,thiscontext as Activity)
         reverseGeoCoder.startFindingAddress()
