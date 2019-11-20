@@ -79,6 +79,16 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Create = view.findViewById(R.id.CreatePromise_Button_Create)
 
 
+        val button_reco : Button = view.findViewById(R.id.CreatePromiseRoom_recommend)
+
+        button_reco.setOnClickListener {
+            val nextIntent = Intent(activity, Recommend::class.java)
+            startActivity(nextIntent)
+        }
+
+
+
+
         tv_Participant!!.hint="지현우,연송희,이유리"
 
         bu_Create!!.setOnClickListener(object: View.OnClickListener {
