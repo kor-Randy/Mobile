@@ -88,7 +88,7 @@ class MainActivity(context : Context) : Fragment(){
 
             LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
             val intent : Intent = Intent(thiscontext,PromiseRoom::class.java)
-            intent.putExtra("select", promiselist[position].roomId)
+            intent.putExtra("selected", promiselist[position].roomId)
             startActivityForResult(intent,0)
 
         }
@@ -136,8 +136,6 @@ class MainActivity(context : Context) : Fragment(){
                 for (postSnapshot in dataSnapshot.children){
                     println("userid ${userid} username ${username}")
                     var promise = postSnapshot.value.toString()
-                    var roomname : String = ""
-                    var time : String = ""
 
                     if(promise == "약속리스트 초기화"){
 
@@ -145,6 +143,7 @@ class MainActivity(context : Context) : Fragment(){
                     else{
 
                         var roomname = ""
+                        var time : String = ""
                         promise_db.child(promise)
                                 .addListenerForSingleValueEvent(object : ValueEventListener {
                                     override fun onCancelled(p0: DatabaseError) {

@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-
+import java.lang.Exception
 
 
 class PromiseRoom : AppCompatActivity()
@@ -33,9 +33,14 @@ class PromiseRoom : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_promiseroom)
 
-
-        roomId = intent.extras["select"] as String
-        println("roomId ${roomId}")
+        try{
+            roomId = intent.extras["selected"] as String
+        }
+        catch (e : Exception){
+            println("room not selected")
+        }
+        //roomId = intent.extras["selected"] as String
+        //println("roomId ${roomId}")
 
 
         intentt = intent
