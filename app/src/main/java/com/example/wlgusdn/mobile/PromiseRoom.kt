@@ -1,5 +1,6 @@
 package com.example.wlgusdn.mobile
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 
+
+
 class PromiseRoom : AppCompatActivity()
 {
     private lateinit var adapter : ViewPagerAdapter
@@ -24,9 +27,16 @@ class PromiseRoom : AppCompatActivity()
     private var goPromiseRoom : Button? = null
     var intentt : Intent? = null
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_promiseroom)
+
+
+        roomId = intent.extras["select"] as String
+        println("roomId ${roomId}")
+
 
         intentt = intent
         viewPager = findViewById(R.id.viewpager1)
@@ -114,5 +124,11 @@ class PromiseRoom : AppCompatActivity()
             // return null to display only the icon
             return null
         }
+    }
+
+    companion object
+    {
+        var roomId : String?=null
+
     }
 }

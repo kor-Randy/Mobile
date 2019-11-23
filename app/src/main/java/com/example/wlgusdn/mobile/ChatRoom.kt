@@ -25,6 +25,9 @@ import com.example.wlgusdn.mobile.R.id.ChatRoom_RecyclerView
 import com.facebook.FacebookSdk.getApplicationContext
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
@@ -37,46 +40,55 @@ class ChatRoom(context : Context) : Fragment(){
 
     var thiscontext = context
     var database = FirebaseDatabase.getInstance().getReference()
-    var databaseRef = database.child("PromiseRoom").child("-LtJYWniugb5Kx4quYTv")
+
     var ChatEditText : EditText? = null
     var filePath : Uri? = null
     val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
 
 
+    val username : String = AccountActivity.myname!!
+    var roomnumber : String = "PromiseNumber"
+    var chatAdapter : Chatroom_ChatAdapter ?= null
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_chatroom, container, false) as View
 
-        ChatEditText = view.findViewById(R.id.ChatRoom_ChatEditText)
-        //val ChatEditText : EditText = findViewById(R.id.ChatRoom_ChatEditText)
+        //ChatEditText  = findViewById(R.id.ChatRoom_ChatEditText)
+        var ChatEditText : EditText = view.findViewById(R.id.ChatRoom_ChatEditText)
+
         val ChatButton : Button = view.findViewById(R.id.ChatRoom_ChatButton)
         //val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
 
         val GalleryButton : ImageButton = view.findViewById(R.id.ChatRoom_GalleryButton)
-        val OtherButton : Button = view.findViewById(R.id.ChatRoom_OtherButton)
+
+        //var useredit : EditText = view.findViewById(R.id.ChatRoom_user)
+        //userid = useredit.text.toString()
 
 
+        try{
+            roomnumber= PromiseRoom.roomId!!
+        }catch (e: Exception){
+            println("no room selected")
+        }
 
+        println("roomid: ${roomnumber}")
         ChatButton.setOnClickListener {
-            val who = "user"
-            val time : String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
-            val text : String = ChatEditText?.text.toString()
 
-            addRecyclerChat(who, text, time, null ,ChatList)
+            //val who = userid
+            //userid = useredit.text.toString()
+            val who : String = username
+            val time : String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
+            val text : String = ChatEditText.text.toString()
+
+            //println("write button who ${who}, text ${text}  time ${time}")
+            //addRecyclerChat(who, text, time, null ,ChatList)
             writeNewMessage(who, text, time)
-            ChatEditText?.setText("")
+            ChatEditText.setText("")
 
         }
 
 
-        OtherButton.setOnClickListener {
-            val who = "other"
-            val time : String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
-            val text : String = ChatEditText?.text.toString()
-
-            addRecyclerChat(who , text, time, null, ChatList)
-            writeNewMessage(who, text, time)
-            ChatEditText?.setText("")
-        }
 
 
         GalleryButton.setOnClickListener{
@@ -84,17 +96,50 @@ class ChatRoom(context : Context) : Fragment(){
             //takePhoto()
 
         }
+
+
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                println("datasnap ${dataSnapshot}")
+                val who = dataSnapshot.child("who").value.toString()
+                val text = dataSnapshot.child("text").value.toString()
+                val time = dataSnapshot.child("time").value.toString()
+
+                println("read who ${who}, text ${text}  time ${time}")
+                addRecyclerChat(username, who, text, time, null, ChatList)
+
+
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+
+        database.child("PromiseRoom").child(roomnumber).child("chatroom").addChildEventListener(childEventListener)
+
+
         return view
     }
 
 
 
     //입력 받은 텍스트 chatList에 추가하기
-    fun addRecyclerChat(who : String, text : String, time : String, image : Bitmap?= null, chatList : MutableList<ChatRoom_Chat>) : MutableList<ChatRoom_Chat>{
+    fun addRecyclerChat(username : String, who : String, text : String, time : String, image : Bitmap ?= null, chatList : MutableList<ChatRoom_Chat>) : MutableList<ChatRoom_Chat>{
+
 
         chatList.add(ChatRoom_Chat(who, text, time, image))
 
-        val chatAdapter = Chatroom_ChatAdapter(chatList)
+        chatAdapter = Chatroom_ChatAdapter(username, chatList)
         ChatRoom_RecyclerView.adapter = chatAdapter
         ChatRoom_RecyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -110,12 +155,21 @@ class ChatRoom(context : Context) : Fragment(){
         }
     }
 
-    private fun writeNewMessage(userId: String, text: String, time: String) {
-        val chat : ChatRoom_Chat = ChatRoom_Chat(userId, text, time)
-        databaseRef.child("chatroom").push().setValue(chat)
 
+
+
+    private fun writeNewMessage(userId: String, text: String, time: String) {
+
+        val chat : ChatRoom_Chat = ChatRoom_Chat(userId, text, time)
+
+        //database.child("message").push().setValue(chat)
+
+        database.child("PromiseRoom").child(roomnumber).child("chatroom").push().setValue(chat)
 
     }
+
+
+
 
 
     fun selectImageInAlbum() {
@@ -138,24 +192,28 @@ class ChatRoom(context : Context) : Fragment(){
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
     }
 
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK){
             if (requestCode == REQUEST_SELECT_IMAGE_IN_ALBUM){
-                var url : Uri?= data?.data
+                var url : Uri ?= data?.data
                 filePath = url
                 var time: String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
 
+
                 try{
                     val bitmap : Bitmap = MediaStore.Images.Media.getBitmap(thiscontext.contentResolver, url)
-                    //val bitmap : Bitmap = MediaStore.Images.Media.getBitmap(thiscontext.contentResolver)
-                    addPhotoDB("user", time, bitmap)
+                    addPhotoDB(username, time, bitmap)
                     val resizedBitmap = resizeBitmap(bitmap)
                     //imageView.setImageBitmap(bitmap)
-                    addRecyclerChat("user", "", time, resizedBitmap, ChatList)
+                    addRecyclerChat(username, username, "", time, resizedBitmap, ChatList)
+                    //writeNewMessage(userid, filename, time)
                     //addGridPhoto("user", time, resizedBitmap)
 
-                }catch (e: Exception){
+                }catch (e:Exception){
                     e.printStackTrace()
                 }
             }
@@ -189,7 +247,7 @@ class ChatRoom(context : Context) : Fragment(){
 
 
         val photo = PhotoRoom_Photo(who, time, image)
-        databaseRef.child("photoroom").push().setValue(photo)
+        //databaseRef.child("photoroom").push().setValue(photo)
         //database.child("PromiseRoom").child("PromiseNumber").child("chatroom").push().setValue(chat)
 
 
@@ -209,6 +267,10 @@ class ChatRoom(context : Context) : Fragment(){
                 .addOnFailureListener( OnFailureListener() {
                     Toast.makeText(getApplicationContext(), "업로드 실패!", Toast.LENGTH_SHORT).show()
                 })
+
+
+
+            writeNewMessage(who, filename, time)
 
         }else{
             Toast.makeText(thiscontext, "Please Upload an Image", Toast.LENGTH_SHORT).show()

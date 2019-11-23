@@ -3,9 +3,12 @@
     <item>
         <shape
                 android:shape="rectangle">
+
             <stroke
                     android:width="0.5dp"
                     android:color="#8f8f8f" />
+
+            <corners android:radius="10dp"></corners>
         </shape>
     </item>
 </selector>

@@ -1,125 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/drawer_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        >
 
+   <EditText
+           android:id="@+id/Main_et"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginStart="8dp"
+           android:layout_marginEnd="8dp"
+           android:layout_marginBottom="52dp"
+           android:ems="10"
+           android:inputType="textPersonName"
+           android:visibility="gone"
+           app:layout_constraintBottom_toTopOf="@+id/Main_Friend"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintHorizontal_bias="0.503"
+           app:layout_constraintStart_toStartOf="parent" />
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:orientation="vertical">
+   <CalendarView
+           android:id="@+id/calendarView2"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:background="@drawable/border_textview"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintHorizontal_bias="0.0"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toTopOf="parent" />
 
-      <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/const1"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal">
+   <TextView
+           android:id="@+id/today"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="8dp"
+           android:text="date"
+           android:textSize="15sp"
+           app:layout_constraintHorizontal_chainStyle="spread"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toRightOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/calendarView2" />
 
+   <Button
+           android:id="@+id/Main_Button_Promise"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
 
+           android:text="약속방가기"
+           app:layout_constraintBaseline_toBaselineOf="@id/Main_Friend"
+           app:layout_constraintLeft_toRightOf="@+id/Main_Friend"
+           app:layout_constraintRight_toRightOf="parent" />
 
-         <TextView
-             android:id="@+id/textView7"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_weight="1"
-             android:gravity="center"
-             android:text="약속해조"
-             android:textStyle="bold"
-             android:textSize="30sp"
-             app:layout_constraintLeft_toLeftOf="parent"
-             app:layout_constraintRight_toRightOf="parent"
-             app:layout_constraintTop_toTopOf="parent" />
-      </androidx.constraintlayout.widget.ConstraintLayout>
+   <Button
+           android:id="@+id/Main_Friend"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginBottom="3dp"
+           android:text="친구추가"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintHorizontal_chainStyle="spread"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toLeftOf="@id/Main_Button_Promise" />
 
-      <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/const2"
-          android:layout_width="match_parent"
-          android:layout_height="543dp"
-          >
+   <ListView
+           android:id="@+id/Main_listview"
+           android:layout_width="0dp"
+           android:layout_height="0dp"
+           android:layout_margin="3dp"
+           android:background="@drawable/promiselist_item_border"
+           app:layout_constraintBottom_toTopOf="@+id/Main_Friend"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/today">
 
-         <EditText
-             android:id="@+id/Main_et"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginStart="8dp"
-             android:layout_marginEnd="8dp"
-             android:layout_marginBottom="52dp"
-             android:ems="10"
-             android:inputType="textPersonName"
-             android:visibility="gone"
-             app:layout_constraintBottom_toTopOf="@+id/Main_Friend"
-             app:layout_constraintEnd_toEndOf="parent"
-             app:layout_constraintHorizontal_bias="0.503"
-             app:layout_constraintStart_toStartOf="parent" />
+   </ListView>
 
-         <CalendarView
-             android:id="@+id/calendarView2"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:layout_marginTop="5dp"
-             android:layout_marginBottom="80dp"
-             android:background="@drawable/border_textview"
-             app:layout_constraintEnd_toEndOf="parent"
-             app:layout_constraintHorizontal_bias="0.0"
-             app:layout_constraintStart_toStartOf="parent"
-             app:layout_constraintTop_toTopOf="parent"
-             app:layout_constraintVertical_bias="0.0" />
-
-         <TextView
-             android:id="@+id/today"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="date"
-             android:textSize="15sp"
-             app:layout_constraintLeft_toLeftOf="parent"
-             app:layout_constraintRight_toLeftOf="@id/Main_List_Promise"
-             app:layout_constraintTop_toBottomOf="@id/calendarView2"
-             android:layout_marginTop="25dp"
-             app:layout_constraintHorizontal_chainStyle="spread"/>
-
-         <ListView
-             android:id="@+id/Main_List_Promise"
-             android:layout_width="100dp"
-             android:layout_height="50dp"
-             android:layout_marginTop="30dp"
-             android:gravity="center_horizontal"
-             app:layout_constraintRight_toRightOf="parent"
-             app:layout_constraintLeft_toRightOf="@id/today"
-             app:layout_constraintTop_toBottomOf="@id/calendarView2">
-
-         </ListView>
-
-         <Button
-             android:id="@+id/Main_Button_Promise"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginBottom="10dp"
-             android:text="약속방가기"
-
-             app:layout_constraintLeft_toRightOf="@+id/Main_Friend"
-             app:layout_constraintRight_toRightOf="parent"
-             app:layout_constraintTop_toBottomOf="@id/Main_List_Promise" />
-
-         <Button
-             android:id="@+id/Main_Friend"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginStart="8dp"
-             android:layout_marginEnd="8dp"
-             android:layout_marginBottom="8dp"
-             android:text="친구추가"
-             app:layout_constraintHorizontal_chainStyle="spread"
-             app:layout_constraintLeft_toLeftOf="parent"
-             app:layout_constraintRight_toLeftOf="@id/Main_Button_Promise"
-             app:layout_constraintTop_toBottomOf="@+id/Main_List_Promise" />
-
-      </androidx.constraintlayout.widget.ConstraintLayout>
-
-   </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,6 +30,7 @@ import com.kakao.message.template.TextTemplate
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
 import net.daum.mf.map.api.MapView
+import java.lang.Exception
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.HashMap
@@ -38,7 +39,7 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
 {
     lateinit var navbtn : Button
     private lateinit var adapter : ViewPagerAdapter
-    internal val tabIcons = intArrayOf(R.drawable.calendar,R.drawable.add)
+    internal val tabIcons = intArrayOf(R.drawable.calendar, R.drawable.cat)
     private var viewPager: ViewPager? = null
     private var tabLayout: TabLayout? = null
     private var goPromiseRoom : Button? = null
@@ -151,8 +152,14 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
         }
 
         fun addFrag(fragment: Fragment, title: String) {
+
+
+
             mFragmentList.add(fragment)
             mFragmentTitleList.add(title)
+
+
+
         }  //ADD FRAGMENT
 
         override fun getPageTitle(position: Int): CharSequence? {

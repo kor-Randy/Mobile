@@ -70,22 +70,22 @@ class Recommend : AppCompatActivity(){
         val latitude : String = position.split(",")[0]
         val longitude : String = position.split(",")[1]
 
-
+        //P 조회순 R 생성일 순
         apiurl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList" +
         "?ServiceKey=HzlbF03lF%2B1P9hi9YUvJwHH4b0IMjI%2F2Ev4JwX1%2BNhSBqzYCBZbg4HluegctzanEHcxai9B9vWTPvciEupnjOA%3D%3D" +
-                "&numOfRows=100" +
-                "&pageSize=10" +
+                "&numOfRows=200" +
+                "&pageSize=1" +
                 "&pageNo=1" +
                 "&startPage=1" +
                 "&MobileOS=AND" +
                 "&MobileApp=AppTest" +
                 "&listYN=Y" +
-                "&arrange=P" +
+                "&arrange=R" +
                 "&mapX=" + longitude+
                 "&mapY=" + latitude+
                 //"&mapX=126.981611" +
                 //"&mapY=37.568477" +
-                "&radius=1000" +
+                "&radius=2000" +
                 //"&contentId=336061" +
                 //"&contentTypeId=" + type.toString() +
                 "&_type=json"
@@ -189,7 +189,7 @@ class Recommend : AppCompatActivity(){
         for (x in 0 until jsonarray.length()) {
             //println("x ${x}")
             val jsonObject = jsonarray.getJSONObject(x)
-            var address = jsonObject.getString("addr1")
+            var address = ""
             var address2 : String = " "
             //+ jsonObject.getString("addr2")
             val name = jsonObject.getString("title")
@@ -199,14 +199,19 @@ class Recommend : AppCompatActivity(){
             var image = ""
 
 
+            try{
+                address = jsonObject.getString("addr1")
 
+            }catch (e: Exception){
+                println("no add")
+            }
 
             try{
                 address2 = address2 + jsonObject.getString("addr2")
                 address = address + address2
 
             }catch (e: Exception){
-                println("no tel")
+                println("no add2")
             }
 
 
