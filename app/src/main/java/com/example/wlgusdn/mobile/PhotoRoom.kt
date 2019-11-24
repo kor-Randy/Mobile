@@ -27,9 +27,11 @@ import com.facebook.FacebookSdk.getApplicationContext
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import kotlinx.android.synthetic.main.activity_photoroom_grid.view.*
 import kotlinx.android.synthetic.main.fragment_chatroom.*
 import java.io.File
+import java.lang.Exception
 
 
 @SuppressLint("ValidFragment")
@@ -39,7 +41,8 @@ class PhotoRoom(context : Context) : Fragment(){
     //val photo by lazy {intent.extras[]}
     val database = FirebaseDatabase.getInstance().getReference()
     val storage = FirebaseStorage.getInstance()
-    val storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/")
+    var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/")
+
     var auth = FirebaseAuth.getInstance()
 
     var gridview: GridView ?= null
@@ -47,6 +50,7 @@ class PhotoRoom(context : Context) : Fragment(){
     var image: ImageView ?= null
     var view_change : Int = 1
     val adapter = PhotoRoom_Adapter(PhotoList)
+    var roomnumber : String = "PromiseNumber"
     //val download : Button ?= null
 
 
@@ -69,6 +73,13 @@ class PhotoRoom(context : Context) : Fragment(){
                 }}
 
 
+        try{
+            roomnumber= PromiseRoom.roomId!!
+        }catch (e: Exception){
+            println("no room selected")
+        }
+
+        storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/" + roomnumber + "/")
 
         gridview = view.findViewById(R.id.PhotoRoom_Gridview)
         //imageview = findViewById(R.id.PhotoRoom_ImagePage)
@@ -158,9 +169,9 @@ class PhotoRoom(context : Context) : Fragment(){
             .addOnSuccessListener { listResult ->
                 listResult.items.forEach { item ->
                     // All the items under listRef.
-                    println("item ${item.name}")
+                    //println("item ${item.name}")
 
-                    item.getBytes(1024 * 1024).addOnSuccessListener  {
+                    item.getBytes(2048 * 4096).addOnSuccessListener  {
                         // Got the download URL for 'users/me/profile.png'
                         //Toast.makeText(this, "download : ${it}", Toast.LENGTH_LONG).show()
                         val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)

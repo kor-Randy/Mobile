@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,6 +22,7 @@ import android.widget.*
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.wlgusdn.mobile.R.id.ChatRoom_RecyclerView
 import com.facebook.FacebookSdk.getApplicationContext
 import com.google.android.gms.tasks.OnFailureListener
@@ -55,7 +57,7 @@ class ChatRoom(context : Context) : Fragment(){
         val view = inflater!!.inflate(R.layout.fragment_chatroom, container, false) as View
 
         //ChatEditText  = findViewById(R.id.ChatRoom_ChatEditText)
-        var ChatEditText : EditText = view.findViewById(R.id.ChatRoom_ChatEditText)
+        val ChatEditText : EditText = view.findViewById(R.id.ChatRoom_ChatEditText)
 
         val ChatButton : Button = view.findViewById(R.id.ChatRoom_ChatButton)
         //val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
@@ -104,9 +106,12 @@ class ChatRoom(context : Context) : Fragment(){
                 val who = dataSnapshot.child("who").value.toString()
                 val text = dataSnapshot.child("text").value.toString()
                 val time = dataSnapshot.child("time").value.toString()
+                var resizedbitmap : Bitmap ?= null
+
+
 
                 println("read who ${who}, text ${text}  time ${time}")
-                addRecyclerChat(username, who, text, time, null, ChatList)
+                addRecyclerChat(username, who, text, time, resizedbitmap, ChatList)
 
 
             }
@@ -139,7 +144,7 @@ class ChatRoom(context : Context) : Fragment(){
 
         chatList.add(ChatRoom_Chat(who, text, time, image))
 
-        chatAdapter = Chatroom_ChatAdapter(username, chatList)
+        chatAdapter = Chatroom_ChatAdapter(roomnumber, username, chatList)
         ChatRoom_RecyclerView.adapter = chatAdapter
         ChatRoom_RecyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -199,17 +204,17 @@ class ChatRoom(context : Context) : Fragment(){
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK){
             if (requestCode == REQUEST_SELECT_IMAGE_IN_ALBUM){
-                var url : Uri ?= data?.data
+                val url : Uri ?= data?.data
                 filePath = url
-                var time: String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
+                val time: String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
 
 
                 try{
                     val bitmap : Bitmap = MediaStore.Images.Media.getBitmap(thiscontext.contentResolver, url)
-                    addPhotoDB(username, time, bitmap)
+
                     val resizedBitmap = resizeBitmap(bitmap)
-                    //imageView.setImageBitmap(bitmap)
-                    addRecyclerChat(username, username, "", time, resizedBitmap, ChatList)
+                    addPhotoDB(username, time, resizedBitmap)
+                    //addRecyclerChat(username, username, "", time, resizedBitmap, ChatList)
                     //writeNewMessage(userid, filename, time)
                     //addGridPhoto("user", time, resizedBitmap)
 
@@ -253,16 +258,19 @@ class ChatRoom(context : Context) : Fragment(){
 
 
         if(filePath != null){
-            var storage = FirebaseStorage.getInstance()
+            val storage = FirebaseStorage.getInstance()
             val format = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
-            var now = Date()
-            var filename = format.format(now) + "_"+ who + ".jpg"
-            var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/" + filename)
+            val now = Date()
+            val filename = format.format(now) + "_"+ who + ".jpg"
+            val storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/" + roomnumber + "/" + filename)
             println("filename: ${filename} filePath ${filePath}")
             storageRef.putFile(filePath!!)
                 .addOnSuccessListener( OnSuccessListener<UploadTask.TaskSnapshot>() {
 
                     Toast.makeText(thiscontext, "Saved to DB", Toast.LENGTH_LONG).show()
+                    chatAdapter?.notifyDataSetChanged()
+
+
                 })
                 .addOnFailureListener( OnFailureListener() {
                     Toast.makeText(getApplicationContext(), "업로드 실패!", Toast.LENGTH_SHORT).show()

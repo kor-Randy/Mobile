@@ -10,14 +10,22 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 
 
-class Chatroom_ChatAdapter (userid: String, chatList : MutableList<ChatRoom_Chat>) : RecyclerView.Adapter<Chatroom_ChatAdapter.ChatViewHolder>(){
+class Chatroom_ChatAdapter (roomnumber : String, userid: String, chatList : MutableList<ChatRoom_Chat>) : RecyclerView.Adapter<Chatroom_ChatAdapter.ChatViewHolder>(){
 
     private var chatList : MutableList<ChatRoom_Chat>? = chatList
     private var userid : String = userid
+    private var roomnumber : String = roomnumber
     private val VIEW_TYPE_MY_MESSAGE = 1
     private val VIEW_TYPE_OTHER_MESSAGE = 2
+
+    val storage = FirebaseStorage.getInstance()
+    val storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/" + roomnumber + "/")
+
+
+
 
 
     override fun onCreateViewHolder(p0: ViewGroup, viewType: Int): ChatViewHolder {
@@ -36,25 +44,57 @@ class Chatroom_ChatAdapter (userid: String, chatList : MutableList<ChatRoom_Chat
 
     override fun onBindViewHolder(p0: ChatViewHolder, position: Int) {
 
-        var chat = chatList!![position]
+        val chat = chatList!![position]
 
         when (p0){
             is MyViewHolder -> {
                 p0.myText.text = chat.text
                 p0.myTextTime.text = chat.time
 
+
                 try{
                     val check = chat.text.split(".")
                     if (check[1] == "jpg"){
                         println("adapter_mytext is image")
-                        p0.myText.visibility = View.INVISIBLE
+                        p0.myText.text = "image"
+                        //p0.myTextTime.text = chat.time
+
+
+                        storageRef.child(chat.text).getBytes(2048 * 4096).addOnSuccessListener{
+                            println("adapter_myimage downloaded")
+
+                            val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+
+                            val resizedbitmap = resizeBitmap(bitmap)
+                            p0.myImage.setImageBitmap(resizedbitmap)
+                            p0.myText.visibility = View.INVISIBLE
+
+
+
+                        }.addOnFailureListener {
+                            println("image not yet")
+                                //Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
+                        }
+
+
+
+
                     }
-                }catch (e : Exception){}
+                }catch (e : Exception){
+                    println("print no image")
+
+                }
+                catch (se : StorageException){
+                    println("image not yet")
+                }
+
+
                 if (chat.image != null){
                     p0.myImage.setImageBitmap(chat.image)
                     p0.myText.visibility = View.INVISIBLE
 
                 }
+
 
             }
 
@@ -64,20 +104,17 @@ class Chatroom_ChatAdapter (userid: String, chatList : MutableList<ChatRoom_Chat
                 p0.otherTextTime.text = chat.time
 
                 try {
-                    var check = chat.text.split(".")
+                    val check = chat.text.split(".")
                     if(check[1] == "jpg"){
                         p0.otherText.text = "image"
 
 
-                        val storage = FirebaseStorage.getInstance()
-                        var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/").child(chat.text)
-
-                        storageRef.getBytes(1024 * 1024).addOnSuccessListener{
+                        storageRef.child(chat.text).getBytes(2048 * 4096).addOnSuccessListener{
                             println("adapter_image downloaded")
 
                             val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
 
-                            var resizedbitmap = resizeBitmap(bitmap)
+                            val resizedbitmap = resizeBitmap(bitmap)
                             p0.otherImage.setImageBitmap(resizedbitmap)
                             p0.otherText.visibility = View.INVISIBLE
 
@@ -89,7 +126,11 @@ class Chatroom_ChatAdapter (userid: String, chatList : MutableList<ChatRoom_Chat
 
 
                     }
-                }catch (e : Exception){p0.otherText.text = chat.text}
+                }catch (e : Exception){
+                    p0.otherText.text = chat.text
+                }
+
+
             }
         }
 
@@ -101,9 +142,9 @@ class Chatroom_ChatAdapter (userid: String, chatList : MutableList<ChatRoom_Chat
         //println("w: ${w}, h: ${h}")
 
 
-        var ratio = 400.0/w
-        var width = w * ratio
-        var height = h * ratio
+        val ratio = 400.0/w
+        val width = w * ratio
+        val height = h * ratio
 
         //println("w: ${width}, h: ${height}")
         return Bitmap.createScaledBitmap(
