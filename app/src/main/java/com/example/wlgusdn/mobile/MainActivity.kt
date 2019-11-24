@@ -38,7 +38,7 @@ class MainActivity(context : Context) : Fragment(){
     val database = FirebaseDatabase.getInstance().getReference()
     val promise_db = database.child("PromiseRoom")
 
-    val userid : String = LobbyActivity.auth!!.currentUser!!.uid
+    val userid : String = LoginActivity.auth!!.currentUser!!.uid
     val username : String = AccountActivity.myname!!
     var promiselist : MutableList<MainActivity_listData> = arrayListOf()
 
@@ -89,6 +89,9 @@ class MainActivity(context : Context) : Fragment(){
             LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
             val intent : Intent = Intent(thiscontext,PromiseRoom::class.java)
             intent.putExtra("selected", promiselist[position].roomId)
+
+
+
             startActivityForResult(intent,0)
 
         }

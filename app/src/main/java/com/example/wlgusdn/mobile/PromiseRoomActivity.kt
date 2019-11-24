@@ -13,6 +13,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -26,11 +27,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat.*
 import androidx.fragment.app.Fragment
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_createpromise.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
@@ -59,11 +58,10 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     var Text_Content : TextView? = null
     //var Bu_ChatRoom : Button? = null
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
-    var poi1 : MapPOIItem = MapPOIItem()
-    var poi2 : MapPOIItem = MapPOIItem()
-
-
+    var poi : ArrayList<MapPOIItem> = ArrayList<MapPOIItem>()
+    var temp : NowLocationData = NowLocationData()
     val ref : DatabaseReference = database.reference
+    var nld : NowLocationData = NowLocationData()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -79,7 +77,27 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         //Bu_ChatRoom = findViewById(R.id.PromiseRoom_Button_ChatRoom)
         //val Bu_ChatRoom : Button = view.findViewById(R.id.PromiseRoom_Button_ChatRoom)
 
+        database.getReference("PromiseRoom").child(PromiseRoom.roomId!!).child("Location").addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
 
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+
+                for(ff in p0.children)
+                {
+                    temp = ff.getValue(NowLocationData::class.java)!!
+                    val mp = MapPOIItem()
+                    mp.itemName = ff.key
+
+                    poi.add(mp)
+
+
+                }
+
+             }
+        })
 
 
         //친구들 위치 넣기
@@ -99,6 +117,73 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                             //  "daummaps://route?sp="+37.537229+","+127.005515+"&ep="+37.4979502+","+127.0276368+"&by=PUBLICTRANSIT"
          val intent:Intent = Intent(Intent.ACTION_VIEW, Uri.parse(url));
          startActivity(intent);*/
+
+        database.getReference("PromiseRoom").child(PromiseRoom.roomId!!).child("Location").addChildEventListener(object: ChildEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+           }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                Log.d("wlgusdn111",p0.key)
+
+                nld = p0.getValue(NowLocationData::class.java)!!
+
+               for(i in 0..poi.size-1)
+               {
+                   if(poi[i].itemName == p0.key)
+                   {
+                       Log.d("wlgusdn111","Add")
+
+                       LobbyActivity.PromiseMap!!.removePOIItem(poi[i])
+                       poi[i].mapPoint = MapPoint.mapPointWithGeoCoord(nld.Lati!!,nld.Long!!)
+                       poi[i].markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
+                       poi[i].isShowCalloutBalloonOnTouch=true
+                       poi[i].itemName = p0.key
+                       poi[i].customImageResourceId = R.drawable.cat
+                       poi[i].leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
+                       LobbyActivity.PromiseMap!!.addPOIItem(poi[i])
+
+                   }
+               }
+
+
+
+                   /* if(lo.key!=AccountActivity.myname)
+                    {
+                        LobbyActivity.PromiseMap!!.removePOIItem(poi1)
+                        poi1.mapPoint= MapPoint.mapPointWithGeoCoord(lo.getValue(NowLocationData::class.java)!!.Lati!!,lo.getValue(NowLocationData::class.java)!!.Long!!)
+                        poi1.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
+                        poi1.isShowCalloutBalloonOnTouch=true
+                        poi1.itemName = lo.key
+                        poi1.customImageResourceId = R.drawable.cat
+                        poi1.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
+
+                        LobbyActivity.PromiseMap!!.addPOIItem(poi1)
+                    }*/
+
+
+
+
+
+
+           }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
+
+
+
 
 
         LobbyActivity.PromiseMap!!.setCurrentLocationEventListener(this)
@@ -171,7 +256,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
 
 
-
+        mp=p1
         val mapPointGeo = p1!!.getMapPointGeoCoord()
         Log.i(
                 LOG_TAG,
@@ -188,40 +273,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
 
 
-        for(i in 0..clsPoint!!.size-1)
-        {
 
-
-
-
-            if(i==0)
-            {
-                LobbyActivity.PromiseMap!!.removePOIItem(poi1)
-                poi1.mapPoint= MapPoint.mapPointWithGeoCoord(clsPoint!![i].mapPointGeoCoord.latitude,clsPoint!![i].mapPointGeoCoord.longitude)
-                poi1.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
-                poi1.isShowCalloutBalloonOnTouch=true
-                poi1.itemName = "친구1"
-                poi1.customImageResourceId = R.drawable.cat
-                poi1.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
-
-                LobbyActivity.PromiseMap!!.addPOIItem(poi1)
-            }
-            else
-            {
-                LobbyActivity.PromiseMap!!.removePOIItem(poi2)
-                poi2.mapPoint= MapPoint.mapPointWithGeoCoord(clsPoint!![i].mapPointGeoCoord.latitude,clsPoint!![i].mapPointGeoCoord.longitude)
-                poi2.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
-                poi2.isShowCalloutBalloonOnTouch=true
-                poi2.itemName = "친구2"
-                poi2.customImageResourceId = R.drawable.dog
-                poi2.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.dog
-
-                LobbyActivity.PromiseMap!!.addPOIItem(poi2)
-            }
-
-
-
-        }
 
 
     }
@@ -454,7 +506,10 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         )
     }
 
-
+companion object
+{
+    var mp : MapPoint?=null
+}
 
 
 }

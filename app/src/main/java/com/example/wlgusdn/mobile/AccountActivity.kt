@@ -26,9 +26,10 @@ import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
-import com.example.wlgusdn.mobile.LobbyActivity.Companion.auth
+import com.example.wlgusdn.mobile.LoginActivity.Companion.auth
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -62,6 +63,8 @@ class AccountActivity : AppCompatActivity()
 
         Accountac=this
 
+        LoginActivity.auth = FirebaseAuth.getInstance()
+
         et_Name = findViewById(R.id.Account_Edit_Name)
         bu = findViewById(R.id.Account_Button_Apply)
         image = findViewById(R.id.Account_Image)
@@ -75,6 +78,7 @@ class AccountActivity : AppCompatActivity()
 
             override fun onDataChange(p0: DataSnapshot) {
                 Log.d("checkkk",p0.child(et_Name.text.toString()).value.toString())
+                Log.d("kkaaoo",auth!!.currentUser!!.uid)
                 if(p0.child(auth!!.currentUser!!.uid).exists())
                 {
                     myname = p0.child(auth!!.currentUser!!.uid).child("name").value.toString()
@@ -146,6 +150,7 @@ class AccountActivity : AppCompatActivity()
                         var b : ArrayList<FriendData> = ArrayList<FriendData>()
                         b.add(FriendData("친구리스트 초기화",null,null))
                         ud = UserData(et_Name.text.toString(),getPhoneNumber(),b,a,FirebaseInstanceId.getInstance().token!!)
+                        myname = et_Name.text.toString()
 
                         database.child("Account").child(auth!!.currentUser!!.uid).setValue(ud)
 
@@ -163,7 +168,7 @@ class AccountActivity : AppCompatActivity()
             var now = Date();
             var filename = formatter.format(now) + ".png";
             //storage 주소와 폴더 파일명을 지정해 준다.
-           var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Account/${(LobbyActivity.auth!!.currentUser!!.uid!!)}/" + filename);
+           var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Account/${(LoginActivity.auth!!.currentUser!!.uid!!)}/" + filename);
             //올라가거라...
             storageRef.putFile(filePath!!)
                     //성공시

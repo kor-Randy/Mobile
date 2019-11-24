@@ -106,17 +106,17 @@ class FriendPopup : Activity()
 
                                               val user = p0.child(arr?.get(position)!!.Id!!).getValue(UserData::class.java)
                                               var fr = user!!.Freinds
-                                              val my = p0.child(LobbyActivity.auth!!.currentUser!!.uid).getValue(UserData::class.java)
+                                              val my = p0.child(LoginActivity.auth!!.currentUser!!.uid).getValue(UserData::class.java)
                                               var myfr = my!!.Freinds
 
-                                              fr!!.add(FriendData(my.Name.toString(),null,LobbyActivity.auth!!.currentUser!!.uid))
+                                              fr!!.add(FriendData(my.Name.toString(),null,LoginActivity.auth!!.currentUser!!.uid))
                                               user.Freinds=fr
                                               database.child("Account").child(arr?.get(position)!!.Id!!).setValue(user)
 
 
                                               myfr!!.add(FriendData(user.Name.toString(),null,arr?.get(position)!!.Id!!))
                                               my.Freinds=myfr
-                                              database.child("Account").child(LobbyActivity.auth!!.currentUser!!.uid).setValue(my)
+                                              database.child("Account").child(LoginActivity.auth!!.currentUser!!.uid).setValue(my)
 
 
                                           }

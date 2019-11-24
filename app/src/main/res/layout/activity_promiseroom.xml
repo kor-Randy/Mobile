@@ -3,6 +3,14 @@
 android:orientation="vertical" android:layout_width="match_parent"
 android:layout_height="match_parent">
 
+    <ToggleButton
+        android:id="@+id/toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:textOff="위치갱신 거부중"
+        android:textOn="위치갱신 허용중" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

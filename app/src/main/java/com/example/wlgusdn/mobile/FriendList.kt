@@ -41,7 +41,7 @@ class FriendList : Activity()
         val drawable = resources.getDrawable(R.drawable.cat)
 
         val bitmap = (drawable as BitmapDrawable).bitmap
-        database.child("Account").child(LobbyActivity.auth!!.currentUser!!.uid).addListenerForSingleValueEvent(object: ValueEventListener {
+        database.child("Account").child(LoginActivity.auth!!.currentUser!!.uid).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
 

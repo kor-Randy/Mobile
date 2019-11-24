@@ -9,10 +9,12 @@ import com.facebook.login.widget.LoginButton
 import java.util.*
 import java.util.Arrays.asList
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
-import com.example.wlgusdn.mobile.LobbyActivity.Companion.auth
+import com.example.wlgusdn.mobile.LoginActivity.Companion.auth
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -43,6 +45,7 @@ class LoginActivity : AppCompatActivity()
     var btn_kakao_login : com.kakao.usermgmt.LoginButton?=null
     var mLoginCallback : LoginCallback?=null
     var mCallbackManager : CallbackManager?=null
+    var logout : Button?=null
 
     private var callback: SessionCallback = SessionCallback()
 
@@ -50,6 +53,24 @@ class LoginActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
+
+        logout = findViewById(R.id.logout)
+
+        logout!!.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                FirebaseAuth.getInstance().signOut()
+                editor!!.remove("kakao")
+                editor!!.commit()
+
+            }
+        })
+
+
+
+        sf = getSharedPreferences("login", 0)
+
+        editor = sf!!.edit()
 
         logincontext=this@LoginActivity
         Password=findViewById(R.id.Login_Edit_Password)
@@ -60,6 +81,8 @@ class LoginActivity : AppCompatActivity()
         auth=FirebaseAuth.getInstance()
 
         Session.getCurrentSession().addCallback(callback)
+
+
 
         btn_facebook_login = findViewById(R.id.Login_FaceLogin) as LoginButton
 
@@ -133,9 +156,13 @@ class LoginActivity : AppCompatActivity()
 
     }
 
-    override fun onStart() { //로그인유저되있는 유저를 확인함
+  /*  override fun onStart() { //로그인유저되있는 유저를 확인함
         super.onStart()
+        auth=FirebaseAuth.getInstance()
         val currentUser = auth!!.currentUser
+
+
+
 
         if(currentUser!=null)
         {
@@ -143,7 +170,7 @@ class LoginActivity : AppCompatActivity()
         }
 
 
-    }
+    }*/
 
     fun gogo(current : FirebaseUser?)
     {
@@ -164,12 +191,16 @@ class LoginActivity : AppCompatActivity()
 
 
     private class SessionCallback : ISessionCallback {
+
+
         override fun onSessionOpenFailed(exception: KakaoException?) {
             Log.d("kkaaoo","Session Call back :: onSessionOpenFailed: ${exception?.message}")
         }
 
         override fun onSessionOpened() {
             UserManagement.getInstance().me(object : MeV2ResponseCallback() {
+
+
 
                 override fun onFailure(errorResult: ErrorResult?) {
                     Log.d("kkaaoo","Session Call back :: on failed ${errorResult?.errorMessage}")
@@ -186,6 +217,7 @@ class LoginActivity : AppCompatActivity()
                         "session response null" }
                     Log.d("kkaaoo","Success"+result!!.id)
 
+
                     var id = Session.getCurrentSession().accessToken
 
 
@@ -199,13 +231,26 @@ class LoginActivity : AppCompatActivity()
 
 
                     }*/
-                    auth!!.signInAnonymously().addOnCompleteListener { task ->
-                        val user=auth!!.currentUser
+                    if(sf!!.contains("kakao"))
+                    {
 
-                        Log.d("kkaaoo",user!!.uid)
-                        val intent  = Intent(logincontext,AccountActivity::class.java)
+                        val intent = Intent(logincontext, AccountActivity::class.java)
+                        logincontext!!.startActivity(intent)
+                    }
+                    else
+                    {
+                    auth!!.signInAnonymously().addOnCompleteListener { task ->
+                        auth=FirebaseAuth.getInstance()
+                       val user = auth!!.currentUser
+
+                        Log.d("kkaaoo", user!!.uid)
+                        editor!!.putString("kakao", user.uid)
+                        editor!!.commit()
+                        val intent = Intent(logincontext, AccountActivity::class.java)
                         logincontext!!.startActivity(intent)
 
+
+                        }
                     }
 
                     // register or login
@@ -226,5 +271,8 @@ class LoginActivity : AppCompatActivity()
 companion object
 {
     var logincontext : Context?=null
+    var auth : FirebaseAuth?=null
+    var sf: SharedPreferences?=null
+    var editor: SharedPreferences.Editor?=null
 }
 }

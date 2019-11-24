@@ -53,7 +53,8 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
     lateinit var et_Name : EditText
     lateinit var bu_Create : Button
     lateinit var tv_Participant : TextView
-    var arr : ArrayList<FriendData>?=null
+    var arr : ArrayList<FriendData>? = ArrayList<FriendData>()
+
 
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
     val myRef : DatabaseReference = database.getReference("PromiseRoom")
@@ -95,7 +96,13 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Create!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
-                arr!!.add(0,FriendData(AccountActivity.myname!!,null,LobbyActivity.auth!!.currentUser!!.uid))
+                Log.d("wlgusdn111",AccountActivity.myname!!.toString())
+                Log.d("wlgusdn111",LoginActivity.auth!!.toString())
+                Log.d("wlgusdn111",LoginActivity.auth!!.currentUser!!.toString())
+                Log.d("wlgusdn111",LoginActivity.auth!!.currentUser!!.uid.toString())
+
+                arr!!.add(0,FriendData(AccountActivity.myname!!,null,LoginActivity.auth!!.currentUser!!.uid))
+
 
 
                 val PRD : PromiseRoomData = PromiseRoomData(et_Name!!.text.toString(),tv_Date!!.text.toString(),tv_Time!!.text.toString(),tv_Place!!.text.toString(),
@@ -136,6 +143,13 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
                                               ud!!.Promises!!.add(RoomNum!!)
                                               database.getReference("Account").child(arr!![i].Id!!).setValue(ud)
+                                     for(i in 0..arr!!.size-1)
+                                     {
+
+                                         database.getReference("Account").child(arr!![i].Id!!).child("Location").child(arr!![i].Name!!).setValue(NowLocationData(0.0,0.0))
+
+                                     }
+
                                           }
 
 

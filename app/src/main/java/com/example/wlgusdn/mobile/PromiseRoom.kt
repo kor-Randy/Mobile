@@ -2,11 +2,13 @@ package com.example.wlgusdn.mobile
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -26,6 +28,7 @@ class PromiseRoom : AppCompatActivity()
     private var tabLayout: TabLayout? = null
     private var goPromiseRoom : Button? = null
     var intentt : Intent? = null
+    var update : ToggleButton?=null
 
 
 
@@ -39,8 +42,42 @@ class PromiseRoom : AppCompatActivity()
         catch (e : Exception){
             println("room not selected")
         }
+
         //roomId = intent.extras["selected"] as String
         //println("roomId ${roomId}")
+
+
+       update = findViewById(R.id.toggle)
+
+        update!!.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                if(update!!.isChecked)
+                {
+                    val intent = Intent(this@PromiseRoom,service::class.java)
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(intent)
+
+                    }
+                    else
+                    {
+
+                        startService(intent)
+                    }
+                }
+                else
+                {
+                    val intent = Intent(this@PromiseRoom,service::class.java)
+
+                    stopService(intent)
+                }
+
+            }
+        })
+
+
+
 
 
         intentt = intent

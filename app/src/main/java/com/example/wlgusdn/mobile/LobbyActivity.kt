@@ -193,6 +193,8 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
         var CreateMap : MapView? = null
         var PromiseMap : MapView? = null
         var refresh : Boolean = false
-        var auth : FirebaseAuth?=null
+
+        var mylati : String?=null
+        var mylong : String?=null
     }
 }
