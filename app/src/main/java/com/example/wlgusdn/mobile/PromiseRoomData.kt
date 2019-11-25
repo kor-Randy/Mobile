@@ -1,6 +1,9 @@
 package com.example.wlgusdn.mobile
 
-class PromiseRoomData(name : String,date : String,time : String, address : String, etcaddress : String,content: String,participant: ArrayList<FriendData>)
+import com.kakao.usermgmt.StringSet
+import com.kakao.usermgmt.StringSet.name
+
+class PromiseRoomData
 {
 
     var Name : String? = null
@@ -11,8 +14,9 @@ class PromiseRoomData(name : String,date : String,time : String, address : Strin
     var Content : String? = null
     var Participants : ArrayList<FriendData>? = null
 
-    init {
-        Name=name
+    constructor(name : String,date : String,time : String, address : String, etcaddress : String,content: String,participant: ArrayList<FriendData>)
+    {
+        Name= name
         Date=date
         Time=time
         Address=address
@@ -20,6 +24,10 @@ class PromiseRoomData(name : String,date : String,time : String, address : Strin
         Content=content
         Participants=participant
     }
+
+
+    constructor()
+    {}
 
 
 

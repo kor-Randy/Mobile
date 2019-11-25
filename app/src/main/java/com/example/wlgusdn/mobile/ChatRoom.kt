@@ -27,14 +27,14 @@ import com.example.wlgusdn.mobile.R.id.ChatRoom_RecyclerView
 import com.facebook.FacebookSdk.getApplicationContext
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.fragment_chatroom.*
+import org.json.JSONObject
 import java.lang.Exception
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 @SuppressLint("ValidFragment")
@@ -47,10 +47,15 @@ class ChatRoom(context : Context) : Fragment(){
     var filePath : Uri? = null
     val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
 
-
     val username : String = AccountActivity.myname!!
+    var prd : PromiseRoomData?=null
+    var tokenarr : ArrayList<FriendData> = ArrayList<FriendData>()
+    var userarr : ArrayList<UserData> = ArrayList<UserData>()
     var roomnumber : String = "PromiseNumber"
     var chatAdapter : Chatroom_ChatAdapter ?= null
+    private val FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send"
+    private val SERVER_KEY = "AIzaSyCAnCD8LTr3J6nBTBNCW2ciCBj5NOYNfHQ"
+
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -70,9 +75,45 @@ class ChatRoom(context : Context) : Fragment(){
 
         try{
             roomnumber= PromiseRoom.roomId!!
+
+
+            database.child("PromiseRoom").child(roomnumber).addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+
+                    Log.d("wlgusdn111",roomnumber.toString())
+
+                    prd = p0.getValue(PromiseRoomData::class.java)
+
+
+                    tokenarr = prd!!.Participants!!
+                    for(i in 0..tokenarr.size-1) {
+
+                        database.child("Account").child(tokenarr[i].Id!!).addListenerForSingleValueEvent(object: ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {
+
+
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+
+                                userarr.add(p0.getValue(UserData::class.java)!!)
+
+                            }
+                        })
+                    }
+
+                }
+            })
+
         }catch (e: Exception){
             println("no room selected")
         }
+
 
         println("roomid: ${roomnumber}")
         ChatButton.setOnClickListener {
@@ -87,6 +128,7 @@ class ChatRoom(context : Context) : Fragment(){
             //addRecyclerChat(who, text, time, null ,ChatList)
             writeNewMessage(who, text, time)
             ChatEditText.setText("")
+            sendPostToFCM(text)
 
         }
 
@@ -169,13 +211,59 @@ class ChatRoom(context : Context) : Fragment(){
 
         //database.child("message").push().setValue(chat)
 
+
+        sendPostToFCM(text)
+
         database.child("PromiseRoom").child(roomnumber).child("chatroom").push().setValue(chat)
 
     }
 
 
 
+    private fun sendPostToFCM(message: String) {
 
+
+        Thread(object : Runnable {
+
+            override fun run() {
+                try {
+                    for(i in 0..tokenarr.size-1) {
+                        // FMC 메시지 생성 start
+                        val root = JSONObject()
+                        val notification = JSONObject()
+                        notification.put("body", message)
+                        notification.put("title", getString(R.string.app_name))
+
+                        root.put("notification", notification)
+                        root.put("collapse_key", "Chat")
+                        root.put("to",userarr[i].Token )   // FMC 메시지 생성 end
+
+                        Log.d("wlgusdn111",userarr[i].Token.toString())
+
+                        val Url = URL(FCM_MESSAGE_URL)
+                        val conn = Url.openConnection() as HttpURLConnection
+
+                        conn.requestMethod = "POST"
+                        conn.doOutput = true
+                        conn.doInput = true
+
+                        conn.addRequestProperty("Authorization", "key=$SERVER_KEY")
+                        conn.setRequestProperty("Accept", "application/json")
+                        conn.setRequestProperty("Content-type", "application/json")
+                        val os = conn.outputStream
+                        os.write(root.toString().toByteArray(charset("utf-8")))
+                        os.flush()
+                        conn.responseCode
+
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+        }).start()
+
+    }
 
     fun selectImageInAlbum() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -241,10 +329,10 @@ class ChatRoom(context : Context) : Fragment(){
 
         //println("w: ${width}, h: ${height}")
         return Bitmap.createScaledBitmap(
-            bitmap,
-            width.toInt(),
-            height.toInt(),
-            false
+                bitmap,
+                width.toInt(),
+                height.toInt(),
+                false
         )
     }
 
@@ -265,16 +353,16 @@ class ChatRoom(context : Context) : Fragment(){
             val storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/" + roomnumber + "/" + filename)
             println("filename: ${filename} filePath ${filePath}")
             storageRef.putFile(filePath!!)
-                .addOnSuccessListener( OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    .addOnSuccessListener( OnSuccessListener<UploadTask.TaskSnapshot>() {
 
-                    Toast.makeText(thiscontext, "Saved to DB", Toast.LENGTH_LONG).show()
-                    chatAdapter?.notifyDataSetChanged()
+                        Toast.makeText(thiscontext, "Saved to DB", Toast.LENGTH_LONG).show()
+                        chatAdapter?.notifyDataSetChanged()
 
 
-                })
-                .addOnFailureListener( OnFailureListener() {
-                    Toast.makeText(getApplicationContext(), "업로드 실패!", Toast.LENGTH_SHORT).show()
-                })
+                    })
+                    .addOnFailureListener( OnFailureListener() {
+                        Toast.makeText(getApplicationContext(), "업로드 실패!", Toast.LENGTH_SHORT).show()
+                    })
 
 
 
@@ -289,3 +377,5 @@ class ChatRoom(context : Context) : Fragment(){
 
 
 }
+
+
