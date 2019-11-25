@@ -3,6 +3,7 @@ package com.example.wlgusdn.mobile
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -171,7 +172,66 @@ class MainActivity(context : Context) : Fragment(){
             override fun onCancelled(databaseError: DatabaseError) {}
         }
 
-        database.child("Account").child(userid).child("promises").addValueEventListener(postListener)
+
+
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+
+
+                println("datasnap ${dataSnapshot}")
+
+                var promise = dataSnapshot.value.toString()
+
+                if(promise == "약속리스트 초기화"){
+
+                }
+                else{
+
+                    var roomname = ""
+                    var time : String = ""
+                    promise_db.child(promise)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onCancelled(p0: DatabaseError) {
+                                }
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    roomname = p0.child("name").value.toString()
+                                    time = p0.child("time").value.toString()
+                                    promiselist.add(MainActivity_listData(roomname, time, promise))
+
+                                    println("added ${time} ${roomname}")
+                                    adapter.notifyDataSetChanged()
+                                }
+                            })
+
+
+                }
+
+
+
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+
+
+            }
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+
+        //database.child("PromiseRoom").child(roomnumber).child("chatroom").addChildEventListener(childEventListener)
+
+
+
+
+        //database.child("Account").child(userid).child("promises").addValueEventListener(postListener)
+        database.child("Account").child(userid).child("promises").addChildEventListener(childEventListener)
 
 
 

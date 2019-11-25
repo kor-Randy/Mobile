@@ -35,6 +35,7 @@ import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
+import java.lang.Exception
 
 @SuppressLint("ValidFragment")
 class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapView.CurrentLocationEventListener
@@ -47,6 +48,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     val LOG_TAG : String = "MainActivity"
     var clsPoint : ArrayList<MapPoint>? = ArrayList<MapPoint>()
     var myPoint : MapPoint? = null
+    var roomnumber : String = "PromiseNumber"
 
 
     var mButtonSearch : Button? = null
@@ -77,6 +79,43 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         //Bu_ChatRoom = findViewById(R.id.PromiseRoom_Button_ChatRoom)
         //val Bu_ChatRoom : Button = view.findViewById(R.id.PromiseRoom_Button_ChatRoom)
 
+        try{
+            roomnumber= PromiseRoom.roomId!!
+        }catch (e: Exception){
+            println("no room selected")
+        }
+
+
+
+        database.getReference("PromiseRoom").child(roomnumber)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                    }
+                    override fun onDataChange(p0: DataSnapshot) {
+                        Text_Content!!.text = p0.child("content").value.toString()
+                        Text_Place!!.text = p0.child("address").value.toString()
+                        Text_Time!!.text = p0.child("date").value.toString() + ", " + p0.child("time").value.toString()
+                        //Text_Participant!!.text = p0.child("participants").value
+
+                        val size = p0.child("participants").childrenCount
+                        println("size : ${size}")
+                        var len : Int = 0
+                        var people : String = ""
+                        for (size in p0.child("participants").children){
+                            people = people + ", " + p0.child("participants").child(len.toString()).child("name").value.toString()
+                            len = len + 1
+                            println("people : ${people}")
+                        }
+                        //adapter.notifyDataSetChanged()
+                        Text_Participant!!.text = people
+                    }
+                })
+
+
+
+
+
+
         database.getReference("PromiseRoom").child(PromiseRoom.roomId!!).child("Location").addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
@@ -96,7 +135,11 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
                 }
 
+
+
              }
+
+
         })
 
 
