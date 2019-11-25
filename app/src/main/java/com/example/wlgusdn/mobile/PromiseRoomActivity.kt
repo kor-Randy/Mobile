@@ -100,6 +100,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         })
 
 
+
         //친구들 위치 넣기
 
         LobbyActivity.PromiseMap!!.setMapViewEventListener(this)
@@ -280,21 +281,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
 
-        //MapView 위를 클릭시 POI 깔기
-        //현재 무한대로 늘어남
-        //POI 클릭시 말풍선 나오고 말풍선 클릭시 다이얼로 intent 이동
-        Log.d("ccheck",p1!!.mapPointGeoCoord.latitude.toString()+","+p1!!.mapPointGeoCoord.longitude.toString())
 
-        var poi : MapPOIItem = MapPOIItem()
-
-        poi.itemName = "click위치"
-        poi.mapPoint= MapPoint.mapPointWithGeoCoord(p1!!.mapPointGeoCoord.latitude,p1!!.mapPointGeoCoord.longitude)
-        poi.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
-        poi.isShowCalloutBalloonOnTouch=true
-        poi.customImageResourceId = R.drawable.cat
-        poi.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
-
-        LobbyActivity.PromiseMap!!.addPOIItem(poi)
     }
 
     override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
