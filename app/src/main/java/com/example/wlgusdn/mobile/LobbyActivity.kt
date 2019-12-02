@@ -3,6 +3,7 @@ package com.example.wlgusdn.mobile
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
@@ -71,6 +72,8 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
         tabLayout = findViewById(R.id.tabs)
         tabLayout!!.setupWithViewPager(viewPager)
         setupTabIcons()
+
+
 
 
 

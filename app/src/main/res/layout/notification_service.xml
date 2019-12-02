@@ -21,14 +21,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="ㅎㅇㅎㅇ"
+            android:text="약속해조"
             android:textSize="18sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="메세지"
+            android:text="실시간 위치 공유중입니다."
             android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

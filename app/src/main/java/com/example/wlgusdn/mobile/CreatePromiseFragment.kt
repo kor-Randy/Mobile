@@ -6,6 +6,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -54,6 +55,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
     lateinit var bu_Create : Button
     lateinit var tv_Participant : TextView
     var arr : ArrayList<FriendData>? = ArrayList<FriendData>()
+    var poi : MapPOIItem = MapPOIItem()
 
 
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -106,9 +108,10 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
 
                 val PRD : PromiseRoomData = PromiseRoomData(et_Name!!.text.toString(),tv_Date!!.text.toString(),tv_Time!!.text.toString(),tv_Place!!.text.toString(),
-                        et_ExtraAddress!!.text.toString(),et_Content!!.text.toString(),arr!!)
+                        et_ExtraAddress!!.text.toString(),et_Content!!.text.toString(),arr!!,poi.mapPoint.mapPointGeoCoord.latitude,poi.mapPoint.mapPointGeoCoord.longitude)
 
                myRef.push().setValue(PRD)
+
 
                 //여기서 초대한 친구들의 DB에 약속방List에 약속방 번호 추가
 
@@ -143,6 +146,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
                                               ud!!.Promises!!.add(RoomNum!!)
                                               database.getReference("Account").child(arr!![i].Id!!).setValue(ud)
+
                                      for(i in 0..arr!!.size-1)
                                      {
 
@@ -310,7 +314,9 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         //현재 무한대로 늘어남
         //POI 클릭시 말풍선 나오고 말풍선 클릭시 다이얼로 intent 이동
 
-        var poi : MapPOIItem = MapPOIItem()
+
+        LobbyActivity.CreateMap!!.removePOIItem(poi)
+
 
         poi.itemName = "장소 추천"
         poi.mapPoint= MapPoint.mapPointWithGeoCoord(p1!!.mapPointGeoCoord.latitude,p1!!.mapPointGeoCoord.longitude)
@@ -325,6 +331,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
         val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder("4a70536a991d4cd7bd72f612b7ab81b8",poi.mapPoint,this,thiscontext as Activity)
         reverseGeoCoder.startFindingAddress()
+
 
 
 

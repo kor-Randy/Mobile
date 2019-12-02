@@ -64,7 +64,9 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     var temp : NowLocationData = NowLocationData()
     val ref : DatabaseReference = database.reference
     var nld : NowLocationData = NowLocationData()
-
+    var Long : Double?=null
+    var Lati : Double?=null
+    var mapPointGeo : MapPoint.GeoCoordinate? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -78,6 +80,8 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         Text_Time = view.findViewById(R.id.PromiseRoom_TextView_Time)
         //Bu_ChatRoom = findViewById(R.id.PromiseRoom_Button_ChatRoom)
         //val Bu_ChatRoom : Button = view.findViewById(R.id.PromiseRoom_Button_ChatRoom)
+
+       // LobbyActivity.PromiseMap.setMapCenterPoint()
 
         try{
             roomnumber= PromiseRoom.roomId!!
@@ -95,7 +99,20 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                         Text_Content!!.text = p0.child("content").value.toString()
                         Text_Place!!.text = p0.child("address").value.toString()
                         Text_Time!!.text = p0.child("date").value.toString() + ", " + p0.child("time").value.toString()
+                        Long = p0.child("long").value.toString().toDouble()
+                        Lati = p0.child("lati").value.toString().toDouble()
                         //Text_Participant!!.text = p0.child("participants").value
+
+                        val poii = MapPOIItem()
+
+
+                        poii.mapPoint = MapPoint.mapPointWithGeoCoord(Lati!!, Long!!)
+                        poii.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.RedPin
+                        poii.isShowCalloutBalloonOnTouch=true
+                        poii.itemName = "Destination 길찾기"
+                        poii.customImageResourceId = R.drawable.dog
+                        poii.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.dog
+                        LobbyActivity.PromiseMap!!.addPOIItem(poii)
 
                         val size = p0.child("participants").childrenCount
                         println("size : ${size}")
@@ -144,7 +161,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
 
 
-        //친구들 위치 넣기
+
 
         LobbyActivity.PromiseMap!!.setMapViewEventListener(this)
         LobbyActivity.PromiseMap!!.setPOIItemEventListener(this)
@@ -157,10 +174,8 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         //daummaps://route?sp=37.537229,127.005515&ep=37.4979502,127.0276368&by=PUBLICTRANSIT
         //
 
-        /* val url : String = "daummaps://storeview?id=659";
-                            //  "daummaps://route?sp="+37.537229+","+127.005515+"&ep="+37.4979502+","+127.0276368+"&by=PUBLICTRANSIT"
-         val intent:Intent = Intent(Intent.ACTION_VIEW, Uri.parse(url));
-         startActivity(intent);*/
+        // val url : String = "daummaps://storeview?id=659";
+
 
         database.getReference("PromiseRoom").child(PromiseRoom.roomId!!).child("Location").addChildEventListener(object: ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -287,9 +302,17 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
         Toast.makeText(thiscontext,p1!!.itemName, Toast.LENGTH_LONG).show()
 
 
-        val intent : Intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:01011111111"))
-        startActivity(intent)
+        if(p1!!.markerType==MapPOIItem.MarkerType.CustomImage) {
 
+            val intent: Intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:01011111111"))
+            startActivity(intent)
+        }
+        else//목적지
+        {
+            val url : String=  "daummaps://route?sp="+mapPointGeo!!.latitude+","+mapPointGeo!!.longitude+"&ep="+Lati+","+Long+"&by=PUBLICTRANSIT"
+            val intent:Intent = Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        }
     }
 
     override fun onDestroy() {
@@ -301,19 +324,19 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
 
 
         mp=p1
-        val mapPointGeo = p1!!.getMapPointGeoCoord()
+       mapPointGeo = p1!!.getMapPointGeoCoord()
         Log.i(
                 LOG_TAG,
                 String.format(
                         "MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)",
-                        mapPointGeo.latitude,
-                        mapPointGeo.longitude,
+                        mapPointGeo!!.latitude,
+                        mapPointGeo!!.longitude,
                         p2
                 )
         )
 
-        clsPoint!!.add( MapPoint.mapPointWithGeoCoord(mapPointGeo.latitude-0.001,mapPointGeo.longitude-0.001))
-        clsPoint!!.add( MapPoint.mapPointWithGeoCoord(mapPointGeo.latitude+0.001,mapPointGeo.longitude+0.001))
+        clsPoint!!.add( MapPoint.mapPointWithGeoCoord(mapPointGeo!!.latitude-0.001,mapPointGeo!!.longitude-0.001))
+        clsPoint!!.add( MapPoint.mapPointWithGeoCoord(mapPointGeo!!.latitude+0.001,mapPointGeo!!.longitude+0.001))
 
 
 
@@ -408,7 +431,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
             if (check_result) {
                 Log.d("@@@", "start")
                 //위치 값을 가져올 수 있음
-                LobbyActivity.PromiseMap!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
+               // LobbyActivity.PromiseMap!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 

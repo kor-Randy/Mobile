@@ -53,6 +53,7 @@ class LoginActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
+        sf = getSharedPreferences("login", 0)
 
         logout = findViewById(R.id.logout)
 
@@ -68,20 +69,61 @@ class LoginActivity : AppCompatActivity()
 
 
 
+
+        logincontext=this@LoginActivity
+        auth=FirebaseAuth.getInstance()
+
+        Log.d("kkaaoo",sf!!.getString("face","nono"))
+
+        if(sf!!.getString("face",null)!=null) {
+
+            val credential = FacebookAuthProvider.getCredential(sf!!.getString("face",""))
+            auth!!.signInWithCredential(credential)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            user = auth!!.currentUser
+                            Log.d("kkaaoo", "signInWithCredential:success")
+
+                            gogo(user)
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("kkaaoo", "signInWithCredential:failure", task.exception)
+                            Toast.makeText(this@LoginActivity, "Authentication failed.", Toast.LENGTH_LONG).show()
+
+                            gogo(null)
+                        }
+                    }
+
+        }
+
+
+
+
+
         sf = getSharedPreferences("login", 0)
 
         editor = sf!!.edit()
 
-        logincontext=this@LoginActivity
         Password=findViewById(R.id.Login_Edit_Password)
         Id = findViewById(R.id.Login_Edit_Id)
+
+
         mCallbackManager = CallbackManager.Factory.create()
 
-        mLoginCallback = LoginCallback()
-        auth=FirebaseAuth.getInstance()
+        //mLoginCallback = LoginCallback()
+       /* btn_kakao_login = findViewById(R.id.btn_kakao_login)
 
-        Session.getCurrentSession().addCallback(callback)
+        btn_kakao_login!!.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
 
+
+
+                Session.getCurrentSession().addCallback(callback)
+
+            }
+        })
+*/
 
 
         btn_facebook_login = findViewById(R.id.Login_FaceLogin) as LoginButton
@@ -92,7 +134,10 @@ class LoginActivity : AppCompatActivity()
 
             override fun onSuccess(result: LoginResult?) {
                 //페이스북 로그인 성공
+                editor!!.putString("face",result!!.accessToken.token)
+                editor!!.commit()
                 handleFacebookAccessToken(result?.accessToken)
+
                 Toast.makeText(this@LoginActivity,"로그인 성공",Toast.LENGTH_LONG).show()
             }
             override fun onCancel() {
@@ -132,7 +177,7 @@ class LoginActivity : AppCompatActivity()
 
     fun handleFacebookAccessToken(token : AccessToken?)
     {
-        Log.d("MainActivity", "handleFacebookAccessToken:$token")
+        Log.d("kkaaoo", "handleFacebookAccessToken:$token")
 
         if (token != null) {
             val credential = FacebookAuthProvider.getCredential(token.token)
@@ -140,13 +185,13 @@ class LoginActivity : AppCompatActivity()
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("MainActivity", "signInWithCredential:success")
-                            val user = auth!!.currentUser
+                            Log.d("kkaaoo", "signInWithCredential:success")
 
-                            gogo(user)
+                            user = auth!!.currentUser
+                            gogo(auth!!.currentUser)
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("MainActivity", "signInWithCredential:failure", task.exception)
+                            Log.w("kkaaoo", "signInWithCredential:failure", task.exception)
                            Toast.makeText(this@LoginActivity,"Authentication failed.",Toast.LENGTH_LONG).show()
 
                             gogo(null)
@@ -156,24 +201,12 @@ class LoginActivity : AppCompatActivity()
 
     }
 
-  /*  override fun onStart() { //로그인유저되있는 유저를 확인함
-        super.onStart()
-        auth=FirebaseAuth.getInstance()
-        val currentUser = auth!!.currentUser
 
-
-
-
-        if(currentUser!=null)
-        {
-           gogo(currentUser)
-        }
-
-
-    }*/
 
     fun gogo(current : FirebaseUser?)
     {
+
+
         if(current!=null)
         {
             val intent : Intent = Intent(this@LoginActivity,AccountActivity::class.java)
@@ -240,11 +273,10 @@ class LoginActivity : AppCompatActivity()
                     else
                     {
                     auth!!.signInAnonymously().addOnCompleteListener { task ->
-                        auth=FirebaseAuth.getInstance()
-                       val user = auth!!.currentUser
+                        user=FirebaseAuth.getInstance().currentUser
 
                         Log.d("kkaaoo", user!!.uid)
-                        editor!!.putString("kakao", user.uid)
+                        editor!!.putString("kakao", user!!.uid)
                         editor!!.commit()
                         val intent = Intent(logincontext, AccountActivity::class.java)
                         logincontext!!.startActivity(intent)
@@ -272,6 +304,7 @@ companion object
 {
     var logincontext : Context?=null
     var auth : FirebaseAuth?=null
+    var user : FirebaseUser?=null
     var sf: SharedPreferences?=null
     var editor: SharedPreferences.Editor?=null
 }

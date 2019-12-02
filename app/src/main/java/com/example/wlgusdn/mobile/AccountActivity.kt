@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
 import com.example.wlgusdn.mobile.LoginActivity.Companion.auth
+import com.example.wlgusdn.mobile.LoginActivity.Companion.user
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
@@ -78,8 +79,8 @@ class AccountActivity : AppCompatActivity()
 
             override fun onDataChange(p0: DataSnapshot) {
                 Log.d("checkkk",p0.child(et_Name.text.toString()).value.toString())
-                Log.d("kkaaoo",auth!!.currentUser!!.uid)
-                if(p0.child(auth!!.currentUser!!.uid).exists())
+                Log.d("kkaaoo",user!!.uid)
+                if(p0.child(user!!.uid).exists())
                 {
                     myname = p0.child(auth!!.currentUser!!.uid).child("name").value.toString()
                     val intent : Intent = Intent(this@AccountActivity,LobbyActivity::class.java)

@@ -13,8 +13,10 @@ class PromiseRoomData
     var EtcAddress : String? = null
     var Content : String? = null
     var Participants : ArrayList<FriendData>? = null
+    var Lati : Double?=null
+    var Long : Double?=null
 
-    constructor(name : String,date : String,time : String, address : String, etcaddress : String,content: String,participant: ArrayList<FriendData>)
+    constructor(name : String,date : String,time : String, address : String, etcaddress : String,content: String,participant: ArrayList<FriendData>,lati : Double, long:Double)
     {
         Name= name
         Date=date
@@ -23,6 +25,8 @@ class PromiseRoomData
         EtcAddress=etcaddress
         Content=content
         Participants=participant
+        Lati=lati
+        Long = long
     }
 
 
