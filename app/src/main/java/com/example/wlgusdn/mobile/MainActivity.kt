@@ -62,9 +62,9 @@ class MainActivity(context : Context) : Fragment(){
 
 
 
-        Promisebtn = view.findViewById(R.id.Main_Button_Promise)
-        friendbtn = view.findViewById(R.id.Main_Friend)
-        et = view.findViewById(R.id.Main_et)
+        //Promisebtn = view.findViewById(R.id.Main_Button_Promise)
+        //friendbtn = view.findViewById(R.id.Main_Friend)
+        //et = view.findViewById(R.id.Main_et)
         calendarview = view.findViewById(R.id.calendarView2)
         showDate = view.findViewById(R.id.today)
 
@@ -100,6 +100,7 @@ class MainActivity(context : Context) : Fragment(){
 
 
 
+        /*
         friendbtn.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
@@ -112,6 +113,7 @@ class MainActivity(context : Context) : Fragment(){
         })
 
 
+
         Promisebtn.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
@@ -120,7 +122,7 @@ class MainActivity(context : Context) : Fragment(){
                 startActivityForResult(intent,0)
 
             }
-        })
+        })*/
 
         calendarview.setOnDateChangeListener(object:CalendarView.OnDateChangeListener{
             override fun onSelectedDayChange(p0: CalendarView, p1: Int, p2: Int, p3: Int) {

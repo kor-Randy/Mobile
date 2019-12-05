@@ -5,6 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view"
     >
+    <item  android:id="@+id/Nav_addFriend"
+            android:title="친구추가">
+
+    </item>
     <item  android:id="@+id/Nav_FriendList"
         android:title="친구목록">
 

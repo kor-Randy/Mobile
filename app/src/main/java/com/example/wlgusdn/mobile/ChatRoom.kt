@@ -1,9 +1,13 @@
 package com.example.wlgusdn.mobile
 
+import android.Manifest
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -12,6 +16,7 @@ import java.util.*
 //import android.support.v7.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,7 +24,11 @@ import android.view.View
 import android.view.ViewGroup
 
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.getExternalFilesDirs
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -32,9 +41,12 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.fragment_chatroom.*
 import org.json.JSONObject
+import java.io.File
+import java.io.IOException
 import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.file.Files.createFile
 
 
 @SuppressLint("ValidFragment")
@@ -55,6 +67,8 @@ class ChatRoom(context : Context) : Fragment(){
     var chatAdapter : Chatroom_ChatAdapter ?= null
     private val FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send"
     private val SERVER_KEY = "AIzaSyCAnCD8LTr3J6nBTBNCW2ciCBj5NOYNfHQ"
+    private val PERMISSION_REQUEST_CODE: Int = 101
+    private var mCurrentPhotoPath: String? = null;
 
 
 
@@ -68,9 +82,9 @@ class ChatRoom(context : Context) : Fragment(){
         //val ChatList : MutableList<ChatRoom_Chat> = arrayListOf()
 
         val GalleryButton : ImageButton = view.findViewById(R.id.ChatRoom_GalleryButton)
+        val CameraButton : ImageButton = view.findViewById(R.id.ChatRoom_CameraButton)
 
-        //var useredit : EditText = view.findViewById(R.id.ChatRoom_user)
-        //userid = useredit.text.toString()
+
 
 
         try{
@@ -137,9 +151,24 @@ class ChatRoom(context : Context) : Fragment(){
 
         GalleryButton.setOnClickListener{
             selectImageInAlbum()
-            //takePhoto()
+
 
         }
+
+
+        CameraButton.setOnClickListener(View.OnClickListener {
+
+            if (checkPersmission()) takePicture()
+            else requestPermission()
+        })
+
+
+
+
+
+
+
+
 
 
         val childEventListener = object : ChildEventListener {
@@ -265,7 +294,7 @@ class ChatRoom(context : Context) : Fragment(){
 
     }
 
-    fun selectImageInAlbum() {
+    private fun selectImageInAlbum() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
         if (intent.resolveActivity(thiscontext.packageManager) != null) {
@@ -274,16 +303,55 @@ class ChatRoom(context : Context) : Fragment(){
         //ChatEditText?.setText(intent.toString())
     }
 
-    fun takePhoto() {
-        val intent1 = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent1.resolveActivity(thiscontext.packageManager) != null) {
-            startActivityForResult(intent1, REQUEST_TAKE_PHOTO)
-        }
+
+    private fun takePicture() {
+
+        val intent: Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val file: File = createFile()
+
+        val uri: Uri = FileProvider.getUriForFile(
+                thiscontext,
+                //"com.example.android.fileprovider",
+                BuildConfig.APPLICATION_ID,
+                file
+        )
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+
     }
+
+
+
+
     companion object {
-        private val REQUEST_TAKE_PHOTO = 0
+        private val REQUEST_IMAGE_CAPTURE = 0
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
     }
+
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+                    takePicture()
+
+                } else {
+                    Toast.makeText(thiscontext, "Permission Denied", Toast.LENGTH_SHORT).show()
+                }
+                return
+            }
+
+            else -> {
+
+            }
+        }
+    }
+
+
 
 
 
@@ -310,12 +378,76 @@ class ChatRoom(context : Context) : Fragment(){
                     e.printStackTrace()
                 }
             }
+
+            else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+
+                //To get the File for further usage
+                val auxFile = File(mCurrentPhotoPath)
+                //filePath = Uri.fromFile(auxFile)
+
+                val time: String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
+
+                var bitmap: Bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
+                val resizedBitmap = resizeBitmap(bitmap)
+
+
+                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , auxFile.outputStream())
+                filePath = Uri.fromFile(auxFile)
+                addPhotoDB(username, time, resizedBitmap)
+                //imageView.setImageBitmap(bitmap)
+
+            }
+
+
             else{
                 Log.d("Activity result", "sth wrong")
             }
+
+
+        }
+
+
+
+
+    }
+
+
+    private fun checkPersmission(): Boolean {
+        return (ContextCompat.checkSelfPermission(thiscontext, android.Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(thiscontext,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+    }
+
+
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(thiscontext as Activity, arrayOf(READ_EXTERNAL_STORAGE, CAMERA), PERMISSION_REQUEST_CODE)
+    }
+
+
+
+    @Throws(IOException::class)
+    private fun createFile(): File {
+
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        return File.createTempFile(
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+        ).apply {
+            mCurrentPhotoPath = absolutePath
+
+
         }
 
     }
+
+
+
+
+
 
     private fun resizeBitmap(bitmap:Bitmap):Bitmap{
         val w : Int = bitmap.width
@@ -336,6 +468,8 @@ class ChatRoom(context : Context) : Fragment(){
         )
     }
 
+
+
     private fun addPhotoDB(who : String, time : String, image : Bitmap){
 
 
@@ -343,7 +477,7 @@ class ChatRoom(context : Context) : Fragment(){
         //databaseRef.child("photoroom").push().setValue(photo)
         //database.child("PromiseRoom").child("PromiseNumber").child("chatroom").push().setValue(chat)
 
-
+        println("filePath: ${filePath}")
 
         if(filePath != null){
             val storage = FirebaseStorage.getInstance()

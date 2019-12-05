@@ -7,11 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import java.text.SimpleDateFormat
 import java.util.*
 //import android.support.v7.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import android.view.ViewGroup
 
 import android.widget.*
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager
@@ -31,6 +34,7 @@ import com.google.firebase.storage.StorageException
 import kotlinx.android.synthetic.main.activity_photoroom_grid.view.*
 import kotlinx.android.synthetic.main.fragment_chatroom.*
 import java.io.File
+import java.io.IOException
 import java.lang.Exception
 
 
@@ -51,6 +55,7 @@ class PhotoRoom(context : Context) : Fragment(){
     var view_change : Int = 1
     val adapter = PhotoRoom_Adapter(PhotoList)
     var roomnumber : String = "PromiseNumber"
+    private var mCurrentPhotoPath: String? = null;
     //val download : Button ?= null
 
 
@@ -59,18 +64,10 @@ class PhotoRoom(context : Context) : Fragment(){
 
 
 
-        auth.signInAnonymously()
+        //auth.signInAnonymously()
 
         val user = auth.currentUser
-        if (user != null){
 
-        }else{
-            auth.signInAnonymously()
-                .addOnSuccessListener {
-                    Toast.makeText(thiscontext, "signInAnonymously", Toast.LENGTH_LONG).show()
-                }.addOnFailureListener{
-                    Toast.makeText(thiscontext, "signed-fail", Toast.LENGTH_LONG).show()
-                }}
 
 
         try{
@@ -114,10 +111,24 @@ class PhotoRoom(context : Context) : Fragment(){
                                 val itemRef = storageRef.child(item.name)
                                 val localFile: File = File.createTempFile(item.name,"jpg")
 
-                                itemRef.getFile(localFile).addOnSuccessListener  {
+                                val file: File = createFile()
+
+                                val uri: Uri = FileProvider.getUriForFile(
+                                        thiscontext,
+                                        //"com.example.android.fileprovider",
+                                        BuildConfig.APPLICATION_ID,
+                                        file
+                                )
+
+
+
+                                itemRef.getFile(file).addOnSuccessListener  {
                                     println("download- ${item.name}")
-                                    BitmapFactory.decodeFile(localFile.absolutePath)
+                                    BitmapFactory.decodeFile(file.absolutePath)
+                                    println("path - ${file.absolutePath}")
+
                                     Toast.makeText(thiscontext, "downloaded", Toast.LENGTH_LONG).show()
+
 
                                 }.addOnFailureListener {
                                     println("download-fail")
@@ -128,6 +139,7 @@ class PhotoRoom(context : Context) : Fragment(){
                                     // percentage in progress
                                     val intProgress = progress.toInt()
                                     //tvFileName.text = "Downloaded " + intProgress + "%...
+
                                 }
                             }
                         }
@@ -253,6 +265,26 @@ class PhotoRoom(context : Context) : Fragment(){
         var transaction = fragmentManager!!.beginTransaction()
         transaction.detach(this).attach(this).commit()
 
+
+    }
+
+
+
+    @Throws(IOException::class)
+    private fun createFile(): File {
+
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        return File.createTempFile(
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+        ).apply {
+            mCurrentPhotoPath = absolutePath
+
+
+        }
 
     }
 

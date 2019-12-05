@@ -84,8 +84,21 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
 
         when(eid)
         {
+            R.id.Nav_addFriend ->
+            {
+                val intent : Intent = Intent(this,FriendPopup::class.java)
+                startActivity(intent)
+
+
+            }
+
+
             R.id.Nav_FriendList ->
             {
+
+                val intent : Intent = Intent(this,FriendList::class.java)
+                startActivityForResult(intent, 0)
+
 
             }
             R.id.Nav_Recommend ->
