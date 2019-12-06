@@ -40,7 +40,7 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
 {
     lateinit var navbtn : Button
     private lateinit var adapter : ViewPagerAdapter
-    internal val tabIcons = intArrayOf(R.drawable.calendar, R.drawable.cat)
+    internal val tabIcons = intArrayOf(R.drawable.calendar, R.drawable.plus)
     private var viewPager: ViewPager? = null
     private var tabLayout: TabLayout? = null
     private var goPromiseRoom : Button? = null

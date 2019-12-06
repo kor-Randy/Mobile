@@ -147,6 +147,7 @@ class LoginActivity : AppCompatActivity()
 
             override fun onError(error: FacebookException?) {
                 //페이스북 로그인 실패
+                //Log.d("페북 로그인 에러",error.toString())
                gogo(null)
             }
         })

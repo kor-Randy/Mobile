@@ -9,8 +9,8 @@
 
     <net.daum.mf.map.api.MapView
         android:id="@+id/PromiseRoom_Map"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         app:layout_constraintBottom_toTopOf="@+id/middle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
