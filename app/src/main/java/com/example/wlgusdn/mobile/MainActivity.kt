@@ -27,8 +27,8 @@ import com.kakao.network.callback.ResponseCallback
 import kotlinx.android.synthetic.main.activity_promiselist.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import java.lang.Exception
+import java.util.*
 import java.util.EnumSet.range
-import java.util.HashMap
 
 
 @SuppressLint("ValidFragment")
@@ -42,6 +42,7 @@ class MainActivity(context : Context) : Fragment(){
     val userid : String = LoginActivity.auth!!.currentUser!!.uid
     val username : String = AccountActivity.myname!!
     var promiselist : MutableList<MainActivity_listData> = arrayListOf()
+    var promiselist_show : MutableList<MainActivity_listData> = arrayListOf()
 
     private lateinit var Promisebtn : Button
     private lateinit var promiseroombtn : Button
@@ -71,25 +72,27 @@ class MainActivity(context : Context) : Fragment(){
 
 
 
+        val date = calendarview.getDate()
+        val calendar = Calendar.getInstance()
+        calendar.setTimeInMillis(date)
+        val Year = calendar.get(Calendar.YEAR)
+        val Month = calendar.get(Calendar.MONTH) + 1
+        val Day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        //promiselist.add(MainActivity_listData("roomname", "18:00"))
+        val finalDate = "${Year} 년 ${Month}월 ${Day}일"
 
 
-        //val adapter = MainActivity_Adapter(promiselist)
-        //Main_listview.adapter = adapter
-
-        //Main_listview.layoutManager = LinearLayoutManager(context)
-        //Main_listview.setHasFixedSize(true)
+        showDate.text = finalDate
 
 
         val list : ListView= view.findViewById(R.id.Main_listview)
-        val adapter  = ArrayAdapter (thiscontext, android.R.layout.simple_list_item_1, promiselist)
+        val adapter  = ArrayAdapter (thiscontext, android.R.layout.simple_list_item_1, promiselist_show)
         list.adapter = adapter
         list.setOnItemClickListener { parent, view, position, id ->
 
             LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
             val intent : Intent = Intent(thiscontext,PromiseRoom::class.java)
-            intent.putExtra("selected", promiselist[position].roomId)
+            intent.putExtra("selected", promiselist_show[position].roomId)
 
 
 
@@ -132,47 +135,31 @@ class MainActivity(context : Context) : Fragment(){
                 Log.d("TAG","onSelectedDayChange:" + date)
 
                 //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
 
+                var date_check : String = "${p1}.${p2}.${p3}"
+                var promiselist_now : MutableList<MainActivity_listData> = arrayListOf()
 
+                for (current in promiselist) {
 
-        val postListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (postSnapshot in dataSnapshot.children){
-                    println("userid ${userid} username ${username}")
-                    var promise = postSnapshot.value.toString()
-
-                    if(promise == "약속리스트 초기화"){
-
+                    if(date_check == current.date){
+                        promiselist_now.add(current)
+                        println("date correct")
                     }
-                    else{
-
-                        var roomname = ""
-                        var time : String = ""
-                        promise_db.child(promise)
-                                .addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onCancelled(p0: DatabaseError) {
-                                    }
-                                    override fun onDataChange(p0: DataSnapshot) {
-                                        roomname = p0.child("name").value.toString()
-                                        time = p0.child("time").value.toString()
-                                        promiselist.add(MainActivity_listData(roomname, time, promise))
-
-                                        println("added ${time} ${roomname}")
-                                        adapter.notifyDataSetChanged()
-                                    }
-                                })
-
-
-                    }
-
 
                 }
-            }
 
-            override fun onCancelled(databaseError: DatabaseError) {}
-        }
+                promiselist_show.clear()
+                promiselist_show.addAll(promiselist_now)
+                
+                for(i in promiselist_show){
+                    println("show ${i.name}")
+                }
+                adapter.notifyDataSetChanged()
+
+
+
+            }
+        })
 
 
 
@@ -191,6 +178,7 @@ class MainActivity(context : Context) : Fragment(){
 
                     var roomname = ""
                     var time : String = ""
+                    var date : String = ""
                     promise_db.child(promise)
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onCancelled(p0: DatabaseError) {
@@ -198,7 +186,15 @@ class MainActivity(context : Context) : Fragment(){
                                 override fun onDataChange(p0: DataSnapshot) {
                                     roomname = p0.child("name").value.toString()
                                     time = p0.child("time").value.toString()
-                                    promiselist.add(MainActivity_listData(roomname, time, promise))
+                                    date = p0.child("date").value.toString()
+
+
+                                    promiselist.add(MainActivity_listData(roomname, date, time, promise))
+
+                                    if("${Year}.${Month}.${Day}" == date){
+                                        promiselist_show.add(MainActivity_listData(roomname, date, time, promise))
+                                        println("date correct")
+                                    }
 
                                     println("added ${time} ${roomname}")
                                     adapter.notifyDataSetChanged()
