@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -53,10 +54,9 @@ class PhotoRoom(context : Context) : Fragment(){
     var imageview : ViewPager?= null
     var image: ImageView ?= null
     var view_change : Int = 1
+    var selected_photo : String = ""
     val adapter = PhotoRoom_Adapter(PhotoList)
     var roomnumber : String = "PromiseNumber"
-    private var mCurrentPhotoPath: String? = null;
-    //val download : Button ?= null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,13 +84,8 @@ class PhotoRoom(context : Context) : Fragment(){
         val download : Button= view.findViewById(R.id.PhotoRoom_download)
 
         image?.visibility = View.INVISIBLE
-        //imageview?.visibility = View.INVISIBLE
 
-        //getlist()
-
-        //val adapter = PhotoRoom_Adapter(PhotoList)
         gridview?.adapter = adapter
-        //adapter.notifyDataSetChanged()
 
 
 
@@ -101,55 +96,102 @@ class PhotoRoom(context : Context) : Fragment(){
         }
 
         download.setOnClickListener {
+
+
+
             when(view_change){
                 1 -> {
-                    storageRef.listAll()
-                        .addOnSuccessListener { listResult ->
-                            listResult.items.forEach { item ->
-                                // All the items under listRef.
-                                //println("download- ${item.name}")
-                                val itemRef = storageRef.child(item.name)
-                                val localFile: File = File.createTempFile(item.name,"jpg")
 
-                                val file: File = createFile()
+                    val builder = AlertDialog.Builder(thiscontext)
+                    builder.setTitle("모든 사진을 저장하시겠습니까?")
+                    builder.setMessage("")
 
-                                val uri: Uri = FileProvider.getUriForFile(
-                                        thiscontext,
-                                        //"com.example.android.fileprovider",
-                                        BuildConfig.APPLICATION_ID,
-                                        file
-                                )
+                    builder.setPositiveButton("YES"){dialog, which ->
 
+                        storageRef.listAll()
+                                .addOnSuccessListener { listResult ->
+                                    listResult.items.forEach { item ->
 
+                                        item.getBytes(2048 * 4096).addOnSuccessListener  {
+                                            val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
 
-                                itemRef.getFile(file).addOnSuccessListener  {
-                                    println("download- ${item.name}")
-                                    BitmapFactory.decodeFile(file.absolutePath)
-                                    println("path - ${file.absolutePath}")
+                                            val savedImageURL = MediaStore.Images.Media.insertImage(
+                                                    thiscontext.contentResolver,
+                                                    bitmap,
+                                                    item.name,
+                                                    "Image of ${item.name}"
+                                            )
 
-                                    Toast.makeText(thiscontext, "downloaded", Toast.LENGTH_LONG).show()
+                                            val uri = Uri.parse(savedImageURL)
+                                            println("saved : $uri")
 
 
-                                }.addOnFailureListener {
-                                    println("download-fail")
-                                    //Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
-                                }.addOnProgressListener {
-                                    val progress = 100.0 * it.bytesTransferred / it.totalByteCount
-
-                                    // percentage in progress
-                                    val intProgress = progress.toInt()
-                                    //tvFileName.text = "Downloaded " + intProgress + "%...
-
+                                        }.addOnFailureListener {
+                                            println("download fail - each item")
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        .addOnFailureListener {
-                            println("download-read-fail")
-                            //Toast.makeText(getApplicationContext(), "read-fail", Toast.LENGTH_SHORT).show()
-                        }
+                                .addOnFailureListener {
+                                    println("download fail")
+                                }
+
+                        Toast.makeText(thiscontext,"저장되었습니다",Toast.LENGTH_SHORT).show()
+
+                    }
+
+                    builder.setNeutralButton("Cancel"){_,_ ->
+                        Toast.makeText(thiscontext,"취소되었습니다",Toast.LENGTH_SHORT).show()
+                    }
+
+                    val dialog: AlertDialog = builder.create()
+
+                    dialog.show()
+
+
+
 
                 }
-                2 -> {}
+
+                2 -> {
+
+                    val builder = AlertDialog.Builder(thiscontext)
+                    builder.setTitle("선택하신 사진을 저장하시겠습니까?")
+                    builder.setMessage("")
+
+                    builder.setPositiveButton("YES"){dialog, which ->
+                        val item = selected_photo
+
+                        storageRef.child(item).getBytes(2048 * 4096).addOnSuccessListener  {
+                            val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+
+                            val savedImageURL = MediaStore.Images.Media.insertImage(
+                                    thiscontext.contentResolver,
+                                    bitmap,
+                                    item,
+                                    "Image of ${item}"
+                            )
+
+                            val uri = Uri.parse(savedImageURL)
+                            println("saved : $uri")
+
+
+                        }.addOnFailureListener {
+                            println("download fail - each item")
+                        }
+
+                        Toast.makeText(thiscontext,"저장되었습니다",Toast.LENGTH_SHORT).show()
+
+                    }
+
+                    builder.setNeutralButton("Cancel"){_,_ ->
+                        Toast.makeText(thiscontext,"취소되었습니다",Toast.LENGTH_SHORT).show()
+                    }
+
+                    val dialog: AlertDialog = builder.create()
+
+                    dialog.show()
+
+                }
             }
         }
 
@@ -161,11 +203,9 @@ class PhotoRoom(context : Context) : Fragment(){
     private fun resizeBitmap(bitmap: Bitmap): Bitmap {
         var w : Int = bitmap.width
         var h : Int = bitmap.height
-        //println("w: ${w}, h: ${h}")
 
         h = w
 
-        //println("w: ${w}, h: ${h}")
         return Bitmap.createScaledBitmap(
             bitmap,
             w,
@@ -180,26 +220,24 @@ class PhotoRoom(context : Context) : Fragment(){
         storageRef.listAll()
             .addOnSuccessListener { listResult ->
                 listResult.items.forEach { item ->
-                    // All the items under listRef.
-                    //println("item ${item.name}")
 
                     item.getBytes(2048 * 4096).addOnSuccessListener  {
-                        // Got the download URL for 'users/me/profile.png'
-                        //Toast.makeText(this, "download : ${it}", Toast.LENGTH_LONG).show()
+
                         val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
                         var resizedbitmap = resizeBitmap(bitmap)
-                        PhotoList.add(PhotoRoom_Photo(" "," ", bitmap, resizedbitmap))
+
+                        PhotoList.add(PhotoRoom_Photo(item.name ," ", bitmap, resizedbitmap))
                         adapter.notifyDataSetChanged()
 
                     }.addOnFailureListener {
                         println("storage-read-fail-each")
-                        //Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
+
                     }
                 }
             }
             .addOnFailureListener {
                 println("storage-read-fail")
-                //Toast.makeText(getApplicationContext(), "read-fail", Toast.LENGTH_SHORT).show()
+
             }
 
 
@@ -215,7 +253,7 @@ class PhotoRoom(context : Context) : Fragment(){
     fun onclick(){
         gridview?.visibility = View.INVISIBLE
         image?.visibility = View.INVISIBLE
-        //imageview?.visibility = View.INVISIBLE
+
 
         when(view_change){
             1 -> gridview?.visibility = View.VISIBLE
@@ -253,6 +291,7 @@ class PhotoRoom(context : Context) : Fragment(){
             view.PhotoRoom_Photo.setOnClickListener{
                 view_change = 2
                 image?.setImageBitmap(photo.image)
+                selected_photo = photo.who
                 onclick()
             }
 
@@ -260,36 +299,6 @@ class PhotoRoom(context : Context) : Fragment(){
         }
 
     }
-
-    fun refresh() {
-        var transaction = fragmentManager!!.beginTransaction()
-        transaction.detach(this).attach(this).commit()
-
-
-    }
-
-
-
-    @Throws(IOException::class)
-    private fun createFile(): File {
-
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
-        return File.createTempFile(
-                "JPEG_${timeStamp}_", /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
-        ).apply {
-            mCurrentPhotoPath = absolutePath
-
-
-        }
-
-    }
-
-
-
 
 
 
