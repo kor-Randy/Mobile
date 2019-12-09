@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import android.location.LocationManager
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
 import com.example.wlgusdn.mobile.PromiseRoom.Companion.roomId
 import com.google.firebase.database.DataSnapshot
@@ -79,7 +80,7 @@ class service : Service(),LocationListener
     var mp : MapPoint?=null
 
 
-    var sem=0
+
     var i=0
     val database = FirebaseDatabase.getInstance().getReference()
 
@@ -102,8 +103,10 @@ class service : Service(),LocationListener
         startForeground()
     }
 
+
     fun startForeground()
     {
+        sem=0
         Log.d("wlgusdn1","Start")
         val notificationIntent = Intent(this, PromiseRoom::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
@@ -112,6 +115,7 @@ class service : Service(),LocationListener
 
         val builder: NotificationCompat.Builder
         if (Build.VERSION.SDK_INT >= 26) {
+            Log.d("wlgusdn111","123")
             val CHANNEL_ID = "snwodeer_service_channel"
             val channel = NotificationChannel(CHANNEL_ID,
                     "SnowDeer Service Channel",
@@ -122,14 +126,21 @@ class service : Service(),LocationListener
 
             builder = NotificationCompat.Builder(this, CHANNEL_ID)
         } else {
+            Log.d("wlgusdn111","456")
             builder = NotificationCompat.Builder(this)
         }
         builder.setSmallIcon(R.mipmap.ic_launcher)
                 .setContent(remoteViews)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
 
         startForeground(1, builder.build())
 
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            sercon=this@service
+            notify(1, builder.build())
+        }
 
             database.child("service").setValue(i)
             i += 1
@@ -174,6 +185,11 @@ class service : Service(),LocationListener
 
     }
 
+    companion object
+    {
+        var sercon : Context?=null
+        var  sem : Int?=null
+    }
     }
 
 

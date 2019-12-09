@@ -11,11 +11,13 @@ import android.widget.ImageView
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import net.daum.mf.map.api.MapView
 import java.lang.Exception
 
 
@@ -57,20 +59,27 @@ class PromiseRoom : AppCompatActivity()
                     val intent = Intent(this@PromiseRoom,service::class.java)
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Log.d("wlgusdn111","start")
                         startForegroundService(intent)
 
                     }
                     else
                     {
-
+                        Log.d("wlgusdn111","start11")
                         startService(intent)
                     }
                 }
                 else
                 {
+                    Log.d("wlgusdn111","stop11")
                     val intent = Intent(this@PromiseRoom,service::class.java)
 
                     stopService(intent)
+
+                    with(NotificationManagerCompat.from(service.sercon!!)) {
+                        // notificationId is a unique int for each notification that you must define
+                        cancel(1)
+                    }
                 }
 
             }
@@ -99,6 +108,20 @@ class PromiseRoom : AppCompatActivity()
             tabLayout!!.getTabAt(i)!!.setCustomView(view1)
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if(service.sem==0)
+        {
+            update!!.isChecked=true
+        }
+        else
+        {
+            update!!.isChecked=false
+
+        }
     }
 
     private fun setupViewPager(viewPager: ViewPager?) {
@@ -141,7 +164,8 @@ class PromiseRoom : AppCompatActivity()
         LobbyActivity.Promisecon!!.removeView(LobbyActivity.PromiseMap)
         Log.d("checkkk",LobbyActivity.Createcon.toString() +"/"+LobbyActivity.CreateMap.toString())
         LobbyActivity.Createcon!!.addView(LobbyActivity.CreateMap)
-        LobbyActivity.refresh=true
+        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+        LobbyActivity.refresh=true//Frag 재구성이 필요함을 표시
         finish()
     }
 

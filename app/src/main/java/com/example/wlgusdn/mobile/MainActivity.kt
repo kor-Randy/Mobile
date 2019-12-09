@@ -58,7 +58,7 @@ class MainActivity(context : Context) : Fragment(){
 
 
 
-
+        LobbyActivity.MainFrag=this
 
 
 
@@ -134,7 +134,6 @@ class MainActivity(context : Context) : Fragment(){
                 showDate.text = date
                 Log.d("TAG","onSelectedDayChange:" + date)
 
-                //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
                 var date_check : String = "${p1}.${p2}.${p3}"
                 var promiselist_now : MutableList<MainActivity_listData> = arrayListOf()

@@ -6,6 +6,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
@@ -35,12 +36,17 @@ import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
-import java.util.HashMap
+import org.json.JSONObject
+import java.lang.Exception
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.*
+import kotlin.collections.ArrayList
 
 @SuppressLint("ValidFragment")
 class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
     var thiscontext : Context = context
-    val CheckFriendList = 0
+    val CheckFriendList = 1
     lateinit  var clsPoint : ArrayList<MapPoint>
     lateinit var bu_Date : TextView
     lateinit var bu_Time : TextView
@@ -56,7 +62,10 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
     lateinit var tv_Participant : TextView
     var arr : ArrayList<FriendData>? = ArrayList<FriendData>()
     var poi : MapPOIItem = MapPOIItem()
+    var userarr : ArrayList<UserData> =ArrayList<UserData>()
 
+    private val FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send"
+    private val SERVER_KEY = "AIzaSyCAnCD8LTr3J6nBTBNCW2ciCBj5NOYNfHQ"
 
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
     val myRef : DatabaseReference = database.getReference("PromiseRoom")
@@ -67,6 +76,9 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
         LobbyActivity.Createcon = view.findViewById(R.id.Create_Con)
         LobbyActivity.CreateMap =view.findViewById(R.id.CreatePromise_Map)
+
+        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOff
+
         tv_Date = view.findViewById(R.id.CreatePromise_TextView_Date)
         tv_Friends = view.findViewById(R.id.CreatePromise_TextView_Participant)
         tv_Place = view.findViewById(R.id.CreatePromise_TextView_Place)
@@ -129,6 +141,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
                                  override fun onDataChange(p0: DataSnapshot) {
 
                                               var ud =p0.child("Account").child(arr!![i].Id!!).getValue(UserData::class.java)
+                                     userarr.add(ud!!)
 
                                               /*   while(true)
                                                  {//Account를 찾아가던 중 내가 찾는 이름을 갖고 있지 않으면 계속해서 찾는다.
@@ -154,7 +167,19 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
                                      }
 
-                                          }
+                                     val sendMsg = "약속방 이름 : "+et_Name.text.toString()+"\n"+"약속 내용 : "+et_Content.text.toString()+"\n"+"약속 장소 : "+tv_Place.text.toString() + "/"+et_ExtraAddress.text.toString()+"\n"+"약속 시간 : "+tv_Time.text.toString()
+
+                                     sendPostToFCM("약속방이 생성되었습니다. ")
+
+                                     val lobbyActivity = LobbyActivity()
+                                     lobbyActivity.changeFrag(sendMsg, RoomNum!!)//
+
+                                     LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
+                                     val intent : Intent = Intent(LobbyActivity.lobbycontext,PromiseRoom::class.java)
+                                     intent.putExtra("selected",RoomNum)
+                                     startActivityForResult(intent,0)
+
+                                 }
 
 
                              })
@@ -168,8 +193,6 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
 
 
-
-
             }
                 })
 
@@ -178,13 +201,24 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Date!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
+                val today = Date()
+                var strdate: String? = null
 
+                var format1 = SimpleDateFormat()
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    format1 = SimpleDateFormat("yyyy-MM-dd")
+
+                    strdate = format1.format(today)
+
+
+                }
 
 
                 val dialog = DatePickerDialog(thiscontext, DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
 
                     CreatePromise_TextView_Date.setText(year.toString() + "."+(month + 1).toString() + "."+dayOfMonth.toString())
-                }, 2019, 0, 1)
+                },  strdate!!.split("-")[0].toInt(),strdate!!.split("-")[1].toInt()-1,strdate!!.split("-")[2].toInt())
 
 
                 dialog.show()
@@ -197,9 +231,19 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Time!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
+
+
                 val timePickerDialog = TimePickerDialog(thiscontext, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
 
-                    tv_Time!!.text = hourOfDay.toString()+" : "+minute.toString()
+                    if(minute==0)
+                    {
+                        tv_Time!!.text = hourOfDay.toString()+" : "+minute.toString()+"0"
+                    }
+                    else
+                    {
+                        tv_Time!!.text = hourOfDay.toString()+" : "+minute.toString()
+                    }
+
 
                 }, 18, 0, true)
 
@@ -247,12 +291,58 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         }
     }
 
+    private fun sendPostToFCM(message: String) {
 
+
+        Thread(object : Runnable {
+
+            override fun run() {
+                try {
+                    for(i in 0..userarr.size-1) {
+                        // FMC 메시지 생성 start
+                        val root = JSONObject()
+                        val notification = JSONObject()
+                        notification.put("body", message)
+                        notification.put("title", getString(R.string.app_name))
+
+                        root.put("notification", notification)
+                        root.put("collapse_key", "Chat")
+                        root.put("to",userarr[i].Token )   // FMC 메시지 생성 end
+
+                        Log.d("wlgusdn111",userarr[i].Token.toString())
+
+                        val Url = URL(FCM_MESSAGE_URL)
+                        val conn = Url.openConnection() as HttpURLConnection
+
+                        conn.requestMethod = "POST"
+                        conn.doOutput = true
+                        conn.doInput = true
+
+                        conn.addRequestProperty("Authorization", "key=$SERVER_KEY")
+                        conn.setRequestProperty("Accept", "application/json")
+                        conn.setRequestProperty("Content-type", "application/json")
+                        val os = conn.outputStream
+                        os.write(root.toString().toByteArray(charset("utf-8")))
+                        os.flush()
+                        conn.responseCode
+
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+        }).start()
+
+    }
 
 
     override fun onResume() {
         super.onResume()
         Log.d("checkkk","resume")
+
+        Log.d("checkkk",LobbyActivity.CreateMap!!.currentLocationTrackingMode.toString())
+        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
         if(LobbyActivity.refresh==true) {
 
             val ft = fragmentManager!!.beginTransaction()
@@ -379,6 +469,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
     override fun onReverseGeoCoderFoundAddress(p0: MapReverseGeoCoder?, p1: String?) {
 
+        //경도 위도로 주소찾기
         Log.d("check","Success to GeoCoder")
         p0.toString()
         onFinishReverseGeoCoding(p1!!)

@@ -1,5 +1,6 @@
 package com.example.wlgusdn.mobile
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -52,6 +53,7 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
+        lobbycontext=this@LobbyActivity
 
 
         val navigationView = findViewById(R.id.nav_view) as NavigationView
@@ -143,6 +145,42 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
 
     }
 
+    fun changeFrag(name : String,roomnum:String)
+    {
+
+
+        var params = TextTemplate
+                .newBuilder(name
+                        , LinkObject.newBuilder().setAndroidExecutionParams("https://play.google.com/store/apps/details?id=com.test.moon.bblind").build()).build()
+
+        var serverCallbackArgs  = HashMap<String, String>();
+        var aa : Map<Any,Any> = HashMap<Any,Any>()
+
+        //serverCallbackArgs.put("user_id", MainActivity.Myuid!!);
+
+
+        //Map 2개 생기는 상황 배제
+        var aaa  = object : ResponseCallback<KakaoLinkResponse>(){
+            override fun onSuccess(result: KakaoLinkResponse?) {
+
+
+                Log.d("ststst","성공")
+
+
+            }
+
+            override fun onFailure(errorResult: ErrorResult?) {
+
+            }
+
+        }
+
+        KakaoLinkService.getInstance().sendDefault(LoginActivity.logincontext, params, serverCallbackArgs,aaa)
+
+
+
+    }
+
 
     private fun setupViewPager(viewPager: ViewPager?) {
         adapter = ViewPagerAdapter(supportFragmentManager)
@@ -203,12 +241,15 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
 
     companion object
     {
+        var MainFrag : Fragment?=null
         var CreatFrag : Fragment?=null
         var Createcon : ConstraintLayout?=null
         var Promisecon : ConstraintLayout?=null
         var CreateMap : MapView? = null
         var PromiseMap : MapView? = null
         var refresh : Boolean = false
+        var lobbycontext : Context?=null
+
 
         var mylati : String?=null
         var mylong : String?=null

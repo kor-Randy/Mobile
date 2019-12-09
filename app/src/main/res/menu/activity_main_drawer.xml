@@ -17,10 +17,6 @@
         android:title="추천하기">
 
     </item>
-    <item   android:id="@+id/Account_Destroy"
-        android:title="회원탈퇴">
-
-    </item>
 
 
 
