@@ -98,7 +98,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                     override fun onDataChange(p0: DataSnapshot) {
                         Text_Content!!.text = p0.child("content").value.toString()
                         Text_Place!!.text = p0.child("address").value.toString()
-                        Text_Time!!.text = p0.child("date").value.toString() + ", " + p0.child("time").value.toString()
+                        Text_Time!!.text = p0.child("date").value.toString() + ",  " + p0.child("time").value.toString()
                         Long = p0.child("long").value.toString().toDouble()
                         Lati = p0.child("lati").value.toString().toDouble()
                         //Text_Participant!!.text = p0.child("participants").value
@@ -119,7 +119,7 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                         var len : Int = 0
                         var people : String = ""
                         for (size in p0.child("participants").children){
-                            people = people + ", " + p0.child("participants").child(len.toString()).child("name").value.toString()
+                            people = people + " " + p0.child("participants").child(len.toString()).child("name").value.toString()
                             len = len + 1
                             println("people : ${people}")
                         }

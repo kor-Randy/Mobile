@@ -45,7 +45,7 @@
     <Button
             android:id="@+id/PhotoRoom_download"
             android:layout_width="0dp"
-            android:layout_height="15dp"
+            android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:text="download"
             app:layout_constraintBaseline_toBaselineOf="@id/textView"
