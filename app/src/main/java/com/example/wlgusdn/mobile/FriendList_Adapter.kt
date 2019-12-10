@@ -1,11 +1,14 @@
 package com.example.wlgusdn.mobile
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wlgusdn.mobile.FriendList_Adapter.ItemClick
 
@@ -42,6 +45,7 @@ class FriendList_Adapter (val context: Context, val FriendList : MutableList<Fri
         {
             p0.itemView.setOnClickListener { v ->
                 itemClick?.onClick(v, position)
+                p0.name.setTextColor(Color.CYAN)
             }
         }
 

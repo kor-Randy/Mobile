@@ -83,7 +83,8 @@ class MainActivity(context : Context) : Fragment(){
         //val date = calendarview.getDate()
 
 
-        //val finalDate = "${Year} 년 ${Month}월 ${Day}일"
+        val finalDate = "${Year} 년 ${Month}월 ${Day}일"
+        showDate.text = finalDate
         // var millis = currentCalendar*1000
         //var mil = compactCalendarView.setCurrentDate()
 

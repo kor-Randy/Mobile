@@ -69,6 +69,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
     var Text_Content : TextView? = null
     //var Bu_ChatRoom : Button? = null
     val database : FirebaseDatabase = FirebaseDatabase.getInstance()
+    val databasephone = database.getReference("Account")
     var poi : ArrayList<MapPOIItem> = ArrayList<MapPOIItem>()
     var temp : NowLocationData = NowLocationData()
     val ref : DatabaseReference = database.reference
@@ -82,7 +83,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val view = inflater!!.inflate(R.layout.fragment_promise, container, false) as View
+        val view = inflater.inflate(R.layout.fragment_promise, container, false) as View
 
         LobbyActivity.PromiseMap = view.findViewById(R.id.PromiseRoom_Map)
         LobbyActivity.Promisecon = view.findViewById(R.id.Promise_con)
@@ -125,8 +126,8 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                         poii.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.dog
                         LobbyActivity.PromiseMap!!.addPOIItem(poii)
 
-                        val size = p0.child("participants").childrenCount
-                        println("size : ${size}")
+                        //val size = p0.child("participants").childrenCount
+                        //println("size : ${size}")
                         var len : Int = 0
                         var people : String = ""
 
@@ -137,17 +138,32 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
                             val id = p0.child("participants").child(len.toString()).child("id").value.toString()
                             val name = p0.child("participants").child(len.toString()).child("name").value.toString()
-                            var bitmap : Bitmap?= null
+                            var phone = ""
+                            databasephone.child(id).addListenerForSingleValueEvent(object: ValueEventListener {
+                                override fun onCancelled(p0: DatabaseError) {
+
+
+                                }
+
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    phone = p0.child("phone").value.toString()
+                                    //println("phone in  ${phone}")
+
+                                }
+                            })
+
+
 
                             storageRef.child(id).listAll()
                                     .addOnSuccessListener { listResult ->
                                         listResult.items.forEach { item ->
 
                                             item.getBytes(2048 * 4096).addOnSuccessListener  {
-                                                bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                                                var bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
                                                 var rebitmap = resizeBitmap(bitmap!!)
 
-                                                Participants.add(ParticipantsData(name, id, rebitmap))
+                                                Participants.add(ParticipantsData(name, id, rebitmap, phone))
+                                                println("phone ${phone}")
 
                                                 //println("part name ${Participants[len-1].name}, part id ${Participants[len-1].id} part image${Participants[len-1].image}")
                                                 println("participants image selected")
@@ -361,10 +377,21 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
         Toast.makeText(thiscontext,p1!!.itemName, Toast.LENGTH_LONG).show()
 
 
-        if(p1!!.markerType==MapPOIItem.MarkerType.CustomImage) {
 
-            val intent: Intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:01011111111"))
-            startActivity(intent)
+        if(p1.markerType==MapPOIItem.MarkerType.CustomImage) {
+
+            for (part in Participants){
+                if (part.name == p1.itemName) {
+                    var phone = part.phone
+                    println("phone : ${phone}")
+
+                    val intent: Intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${phone}"))
+                    startActivity(intent)
+
+                }
+            }
+
+
         }
         else//목적지
         {
@@ -581,6 +608,8 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
         builder.setTitle("위치 서비스 비활성화")
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" + "위치 설정을 수정하실래요?")
         builder.setCancelable(true)
+
+
         builder.setPositiveButton("설정", DialogInterface.OnClickListener { dialog, id ->
             val callGPSSettingIntent =
                     Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)

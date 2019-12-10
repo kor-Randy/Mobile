@@ -9,7 +9,7 @@ class MainActivity_listData (name : String, date : String, time: String, roomId 
     var roomId : String = roomId
 
     override fun toString(): String {
-        return time + "  " + name
+        return time + "     " + name
 
     }
 

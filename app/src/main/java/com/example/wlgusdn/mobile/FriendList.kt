@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
@@ -58,6 +59,7 @@ class FriendList : Activity()
         adapter.itemClick = object: FriendList_Adapter.ItemClick {
             override fun onClick(view: View, position: Int) {
 
+                view.setBackgroundColor(Color.BLUE)
                 checkedarr.add(FriendData(array[position].Name,null,array[position].Id))
                 println("arr size ${checkedarr.size}")
 
@@ -96,6 +98,7 @@ class FriendList : Activity()
                                     item.getBytes(2048 * 4096).addOnSuccessListener  {
 
                                         bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                                        bitmap = resizeBitmap(bitmap!!)
                                         array.add(FriendData(me.Freinds!![i].Name, bitmap, me.Freinds!![i].Id))
                                         adapter.notifyDataSetChanged()
                                         println("size ${array.size}")
@@ -130,6 +133,21 @@ class FriendList : Activity()
             }
         })
 
+    }
+
+
+    private fun resizeBitmap(bitmap: Bitmap): Bitmap {
+        var w : Int = bitmap.width
+        var h : Int = bitmap.height
+
+        h = w
+
+        return Bitmap.createScaledBitmap(
+                bitmap,
+                w,
+                h,
+                false
+        )
     }
 
 
