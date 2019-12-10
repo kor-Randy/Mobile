@@ -78,6 +78,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
     var mapPointGeo : MapPoint.GeoCoordinate? = null
 
     val Participants : MutableList<ParticipantsData> = arrayListOf()
+    val username : String = AccountActivity.myname!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -132,8 +133,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
                         for (size in p0.child("participants").children){
                             people = people + " " + p0.child("participants").child(len.toString()).child("name").value.toString()
-                            len = len + 1
-                            println("people : ${people}")
+
 
                             val id = p0.child("participants").child(len.toString()).child("id").value.toString()
                             val name = p0.child("participants").child(len.toString()).child("name").value.toString()
@@ -145,8 +145,9 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
                                             item.getBytes(2048 * 4096).addOnSuccessListener  {
                                                 bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                                                var rebitmap = resizeBitmap(bitmap!!)
 
-                                                Participants.add(ParticipantsData(name, id, bitmap))
+                                                Participants.add(ParticipantsData(name, id, rebitmap))
 
                                                 //println("part name ${Participants[len-1].name}, part id ${Participants[len-1].id} part image${Participants[len-1].image}")
                                                 println("participants image selected")
@@ -159,6 +160,9 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                                     .addOnFailureListener {
                                         println("no account image")
                                     }
+
+                            len = len + 1
+                            println("people : ${people}")
 
 
                         }
@@ -218,11 +222,20 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                                 poi[i].itemName = p0.key
 
                                 for (part in Participants){
+
                                     if (part.name == poi[i].itemName){
-                                        poi[i].customImageBitmap = part.image
-                                        
-                                        println("${poi[i].itemName}  image ${part.image}")
+
+
+                                        if (poi[i].itemName == username){
+                                            println("me")
+                                        }
+                                        else{
+                                            poi[i].customImageBitmap = part.image
+                                            println("${poi[i].itemName}  image ${part.image}")
+                                        }
+
                                     }
+
                                 }
 
                                 LobbyActivity.PromiseMap!!.addPOIItem(poi[i])
@@ -604,6 +617,25 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                 LocationManager.NETWORK_PROVIDER
         )
     }
+
+
+
+    private fun resizeBitmap(bitmap: Bitmap): Bitmap {
+
+        val w = 100
+        val h = 100
+
+
+        return Bitmap.createScaledBitmap(
+                bitmap,
+                w,
+                h,
+                false
+        )
+    }
+
+
+
 
 companion object
 {

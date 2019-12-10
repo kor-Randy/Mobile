@@ -58,10 +58,6 @@ class FriendList_Adapter (val context: Context, val FriendList : MutableList<Fri
             name.text = list.Name
             image.setImageBitmap(list.Pic)
 
-            name.setOnClickListener{
-
-            }
-
         }
     }
 
