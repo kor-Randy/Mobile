@@ -22,7 +22,7 @@ import net.daum.mf.map.api.MapView
 import android.location.LocationManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
-import com.example.wlgusdn.mobile.PromiseRoom.Companion.roomId
+import com.example.wlgusdn.mobile.PromiseRoomActivity.Companion.roomId
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -108,7 +108,7 @@ class service : Service(),LocationListener
     {
         sem=0
         Log.d("wlgusdn1","Start")
-        val notificationIntent = Intent(this, PromiseRoom::class.java)
+        val notificationIntent = Intent(this,PromiseRoomActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
         val remoteViews = RemoteViews(packageName, R.layout.notification_service)
@@ -157,7 +157,7 @@ class service : Service(),LocationListener
 
 
 
-                     database.child("PromiseRoom").child(roomId!!).child("Location").child(AccountActivity.myname!!)
+                     database.child("PromiseRoom").child(PromiseRoomActivity.roomId!!).child("Location").child(AccountActivity.myname!!)
                                       .setValue(NowLocationData(location!!.longitude,location!!.latitude))
 
 

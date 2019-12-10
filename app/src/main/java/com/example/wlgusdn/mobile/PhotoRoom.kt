@@ -71,7 +71,7 @@ class PhotoRoom(context : Context) : Fragment(){
 
 
         try{
-            roomnumber= PromiseRoom.roomId!!
+            roomnumber= PromiseRoomActivity.roomId!!
         }catch (e: Exception){
             println("no room selected")
         }

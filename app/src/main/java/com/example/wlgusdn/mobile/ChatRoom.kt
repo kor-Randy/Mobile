@@ -88,7 +88,7 @@ class ChatRoom(context : Context) : Fragment(){
 
 
         try{
-            roomnumber= PromiseRoom.roomId!!
+            roomnumber= PromiseRoomActivity.roomId!!
 
 
             database.child("PromiseRoom").child(roomnumber).addListenerForSingleValueEvent(object: ValueEventListener {

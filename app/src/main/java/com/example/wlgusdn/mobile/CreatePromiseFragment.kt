@@ -175,7 +175,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
                                      lobbyActivity.changeFrag(sendMsg, RoomNum!!)//
 
                                      LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
-                                     val intent : Intent = Intent(LobbyActivity.lobbycontext,PromiseRoom::class.java)
+                                     val intent : Intent = Intent(LobbyActivity.lobbycontext,PromiseRoomActivity::class.java)
                                      intent.putExtra("selected",RoomNum)
                                      startActivityForResult(intent,0)
 

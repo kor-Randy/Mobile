@@ -96,7 +96,7 @@ class MainActivity(context : Context) : Fragment(){
         list.setOnItemClickListener { parent, view, position, id ->
 
             LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
-            val intent : Intent = Intent(thiscontext,PromiseRoom::class.java)
+            val intent : Intent = Intent(thiscontext,PromiseRoomActivity::class.java)
             intent.putExtra("selected", promiselist_show[position].roomId)
 
 
