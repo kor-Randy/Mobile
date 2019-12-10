@@ -2,6 +2,8 @@ package com.example.wlgusdn.mobile
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
@@ -13,22 +15,34 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import android.graphics.drawable.PaintDrawable
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.activity_promiselist.*
 
 
 class FriendList : Activity()
 {
-    lateinit var lv : ListView
+    lateinit var lv : RecyclerView
     lateinit var bu : Button
-    var arr = ArrayList<FriendData>()
+    //var arr = ArrayList<FriendData>()
+    var array : MutableList<FriendData> = arrayListOf()
 
     var checkedarr = ArrayList<FriendData>()
     var arrname = ArrayList<String>()
     var arrid  = ArrayList<String>()
 
     val database = FirebaseDatabase.getInstance().getReference()
-    var adap : FriendListAdapter?= null
+    var adapter : FriendList_Adapter?= null
+
+    val storage = FirebaseStorage.getInstance()
+    var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Account/")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +52,26 @@ class FriendList : Activity()
 
         lv = findViewById(R.id.friendlist_lv)
         bu = findViewById(R.id.friendlist_bu)
-        val drawable = resources.getDrawable(R.drawable.cat)
 
-        val bitmap = (drawable as BitmapDrawable).bitmap
+        val adapter = FriendList_Adapter(this,array)
+
+        adapter.itemClick = object: FriendList_Adapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
+
+                checkedarr.add(FriendData(array[position].Name,null,array[position].Id))
+                println("arr size ${checkedarr.size}")
+
+
+            }
+        }
+
+
+        lv.adapter = adapter
+
+        lv.layoutManager = LinearLayoutManager(this)
+        lv.setHasFixedSize(true)
+
+
         database.child("Account").child(LoginActivity.auth!!.currentUser!!.uid).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
@@ -57,26 +88,35 @@ class FriendList : Activity()
 
                 for(i in 1..me.Freinds!!.size-1)
                 {
-                    arr!!.add(FriendData(me.Freinds!![i].Name,bitmap, me.Freinds!![i].Id))
+                    var bitmap : Bitmap ?= null
+                    storageRef.child(me.Freinds!![i].Id!!).listAll()
+                            .addOnSuccessListener { listResult ->
+                                listResult.items.forEach { item ->
+
+                                    item.getBytes(2048 * 4096).addOnSuccessListener  {
+
+                                        bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                                        array.add(FriendData(me.Freinds!![i].Name, bitmap, me.Freinds!![i].Id))
+                                        adapter.notifyDataSetChanged()
+                                        println("size ${array.size}")
+                                        //var resize = resizeBitmap(bitmap)
+                                        println("image selected")
+
+                                    }.addOnFailureListener {
+                                        println("no account image")
+                                    }
+                                }
+                            }
+                            .addOnFailureListener {
+                                println("no account image")
+                            }
 
                 }
 
-                adap = FriendListAdapter(arr)
-                lv.adapter=adap
-                adap!!.notifyDataSetChanged()
 
             }
         })
 
-
-        lv.setOnItemClickListener(object: AdapterView.OnItemClickListener {
-            override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
-                lv.setSelector(PaintDrawable(-0x10000))
-
-                checkedarr.add(FriendData(arr!![position].Name,null,arr!![position].Id))
-            }
-        })
 
         bu.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {

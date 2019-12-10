@@ -4,14 +4,14 @@
     android:layout_width="300dp"
     android:layout_height="600dp">
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendlist_lv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
         android:background="#FFFFFF">
 
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <Button
             android:id="@+id/friendlist_bu"

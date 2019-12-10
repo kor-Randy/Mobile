@@ -9,6 +9,10 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
@@ -30,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.*
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_createpromise.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
@@ -49,6 +54,10 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     var clsPoint : ArrayList<MapPoint>? = ArrayList<MapPoint>()
     var myPoint : MapPoint? = null
     var roomnumber : String = "PromiseNumber"
+    val storage = FirebaseStorage.getInstance()
+    var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Account/")
+
+
 
 
     var mButtonSearch : Button? = null
@@ -67,6 +76,8 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
     var Long : Double?=null
     var Lati : Double?=null
     var mapPointGeo : MapPoint.GeoCoordinate? = null
+
+    val Participants : MutableList<ParticipantsData> = arrayListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -118,10 +129,39 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                         println("size : ${size}")
                         var len : Int = 0
                         var people : String = ""
+
+
                         for (size in p0.child("participants").children){
                             people = people + " " + p0.child("participants").child(len.toString()).child("name").value.toString()
                             len = len + 1
                             println("people : ${people}")
+
+                            val id = p0.child("participants").child(len.toString()).child("id").value.toString()
+                            val name = p0.child("participants").child(len.toString()).child("name").value.toString()
+                            var bitmap : Bitmap?= null
+
+                            storageRef.child(id).listAll()
+                                    .addOnSuccessListener { listResult ->
+                                        listResult.items.forEach { item ->
+
+                                            item.getBytes(2048 * 4096).addOnSuccessListener  {
+                                                bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+
+                                                Participants.add(ParticipantsData(name, id, bitmap))
+
+                                                //println("part name ${Participants[len-1].name}, part id ${Participants[len-1].id} part image${Participants[len-1].image}")
+                                                println("participants image selected")
+
+                                            }.addOnFailureListener {
+                                                println("no participant image")
+                                            }
+                                        }
+                                    }
+                                    .addOnFailureListener {
+                                        println("no account image")
+                                    }
+
+
                         }
                         //adapter.notifyDataSetChanged()
                         Text_Participant!!.text = people
@@ -177,8 +217,15 @@ class PromiseRoomActivity constructor(context : Context) : Fragment(), MapView.P
                                 poi[i].markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.CustomImage
                                 poi[i].isShowCalloutBalloonOnTouch=true
                                 poi[i].itemName = p0.key
-                                poi[i].customImageResourceId = R.drawable.cat
-                                poi[i].leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
+
+                                for (part in Participants){
+                                    if (part.name == poi[i].itemName){
+                                        poi[i].customImageBitmap = part.image
+                                        
+                                        println("${poi[i].itemName}  image ${part.image}")
+                                    }
+                                }
+
                                 LobbyActivity.PromiseMap!!.addPOIItem(poi[i])
 
                             }
