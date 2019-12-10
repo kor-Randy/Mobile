@@ -235,11 +235,22 @@ class MainActivity(context : Context) : Fragment(){
                                         promiselist_show.add(MainActivity_listData(roomname, date, time, promise))
                                         println("date correct")
                                     }
+                                    val today = calendar.get(Calendar.DATE)
+                                    val sdff = SimpleDateFormat("dd", Locale.KOREA)
+                                    val todate = sdff.format(todate_date).toString()
+                                    val intdate = todate.toInt()
 
 
-                                    //약속 생성한 날짜에 맞춰 달력에 점 찍기
-                                    val ev = Event(Color.BLUE,epoch,"promise")
-                                    compactCalendarView.addEvent(ev)
+                                    if(intdate-today == 1 || intdate-today == 2)
+                                    {
+                                        val ev = Event(Color.RED,epoch,"promise")
+                                        compactCalendarView.addEvent(ev)
+                                    }
+                                    else{
+                                        val ev = Event(Color.BLUE,epoch,"promise")
+                                        compactCalendarView.addEvent(ev)
+                                    }
+
 
                                     println("added ${time} ${roomname}")
                                     adapter.notifyDataSetChanged()
