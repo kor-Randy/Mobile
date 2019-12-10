@@ -257,11 +257,17 @@ class ChatRoom(context : Context) : Fragment(){
                         // FMC 메시지 생성 start
                         val root = JSONObject()
                         val notification = JSONObject()
+                        val data = JSONObject()
                         notification.put("body", message)
                         notification.put("title", getString(R.string.app_name))
 
+                        data.put("score","5x1")
+                        data.put("time","20:33")
+
+                        root.put("data",data)
                         root.put("notification", notification)
                         root.put("collapse_key", "Chat")
+                        root.put("time_to_live",10)
                         root.put("to",userarr[i].Token )   // FMC 메시지 생성 end
 
                         Log.d("wlgusdn111",userarr[i].Token.toString())

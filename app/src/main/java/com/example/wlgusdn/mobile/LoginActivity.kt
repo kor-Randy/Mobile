@@ -40,13 +40,11 @@ import com.kakao.util.exception.KakaoException
 
 class LoginActivity : AppCompatActivity()
 {
-    var Password : EditText?= null
-    var Id : EditText? = null
+
     var btn_facebook_login : LoginButton?=null
     var btn_kakao_login : com.kakao.usermgmt.LoginButton?=null
     var mLoginCallback : LoginCallback?=null
     var mCallbackManager : CallbackManager?=null
-    var logout : Button?=null
     var l : loading?=null
     private var callback: SessionCallback = SessionCallback()
 
@@ -57,17 +55,7 @@ class LoginActivity : AppCompatActivity()
         l = loading(this@LoginActivity)
         sf = getSharedPreferences("login", 0)
 
-        logout = findViewById(R.id.logout)
 
-        logout!!.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
-
-                FirebaseAuth.getInstance().signOut()
-                editor!!.remove("kakao")
-                editor!!.commit()
-
-            }
-        })
 
 
 
@@ -108,8 +96,7 @@ class LoginActivity : AppCompatActivity()
 
         editor = sf!!.edit()
 
-        Password=findViewById(R.id.Login_Edit_Password)
-        Id = findViewById(R.id.Login_Edit_Id)
+
 
 
         mCallbackManager = CallbackManager.Factory.create()

@@ -226,7 +226,7 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
         if(requestCode==0)
         {
 
-            if(data!!.getIntExtra("res",0)==2)
+            if(data?.getIntExtra("res",0)==2)
             {
                 Log.d("checkkk","재구성")
                 val ft = fragmentManager!!.beginTransaction()

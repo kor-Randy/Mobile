@@ -22,7 +22,7 @@ import java.lang.Exception
 class PromiseRoomActivity : AppCompatActivity()
 {
     private lateinit var adapter : ViewPagerAdapter
-    internal val tabIcons = intArrayOf(R.mipmap.promiseroom,R.mipmap.chat,R.mipmap.picture)
+    internal val tabIcons = intArrayOf(R.mipmap.promiseroom,R.mipmap.chat,R.drawable.picture)
     private var viewPager: ViewPager? = null
     //private var viewPager2: ViewPager? = null
     private var tabLayout: TabLayout? = null
@@ -100,7 +100,7 @@ class PromiseRoomActivity : AppCompatActivity()
 
     }
     private fun setupTabIcons() {
-        for(i in 0..1) {
+        for(i in 0..2) {
             val view1 = layoutInflater.inflate(R.layout.customtab, null) as View
             view1.findViewById<ImageView>(R.id.icon).setBackgroundResource(tabIcons[i])
             tabLayout!!.getTabAt(i)!!.setCustomView(view1)

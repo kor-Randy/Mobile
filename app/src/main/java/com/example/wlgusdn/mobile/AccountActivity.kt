@@ -84,11 +84,13 @@ class AccountActivity : AppCompatActivity()
             }
 
             override fun onDataChange(p0: DataSnapshot) {
+                //계정이 있는지 확인
                 Log.d("checkkk",p0.child(et_Name.text.toString()).value.toString())
                 Log.d("kkaaoo",user!!.uid)
                 if(p0.child(user!!.uid).exists())
-                {
-                    l!!.show()
+                {//계정이 있는지 확인
+
+                    l!!.show()//Progress Dialog실행
 
 
                     myname = p0.child(auth!!.currentUser!!.uid).child("name").value.toString()
@@ -263,6 +265,7 @@ class AccountActivity : AppCompatActivity()
         override fun run() {
 
             l!!.dismiss()
+            l!!.show()//Progress Dialog 종료
         }
     }
 
@@ -271,7 +274,7 @@ class AccountActivity : AppCompatActivity()
         if(requestCode==REQUEST_TEXT_GALLERY)
             {
 
-                val selectedImage = data!!.getData();
+                val selectedImage = data?.getData();
                 filePath=selectedImage
                 var filePathColumn : Array<String> = arrayOf(MediaStore.Images.Media.DATA)
                 var cursor = getContentResolver().query(selectedImage,
