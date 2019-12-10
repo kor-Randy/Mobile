@@ -164,7 +164,7 @@ class PromiseRoom : AppCompatActivity()
         LobbyActivity.Promisecon!!.removeView(LobbyActivity.PromiseMap)
         Log.d("checkkk",LobbyActivity.Createcon.toString() +"/"+LobbyActivity.CreateMap.toString())
         LobbyActivity.Createcon!!.addView(LobbyActivity.CreateMap)
-        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         LobbyActivity.refresh=true//Frag 재구성이 필요함을 표시
         finish()
     }

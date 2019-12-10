@@ -182,9 +182,23 @@ class service : Service(),LocationListener
         super.onDestroy()
         sem=1
         Log.d("wlgusdn1","des")
+        with(NotificationManagerCompat.from(service.sercon!!)) {
+            // notificationId is a unique int for each notification that you must define
+            cancel(1)
+        }
 
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+
+        with(NotificationManagerCompat.from(service.sercon!!)) {
+            // notificationId is a unique int for each notification that you must define
+            cancel(1)
+        }
+
+        stopSelf()
+    }
     companion object
     {
         var sercon : Context?=null

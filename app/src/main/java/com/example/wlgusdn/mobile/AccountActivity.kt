@@ -13,11 +13,13 @@ import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.telephony.PhoneNumberUtils
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -53,6 +55,8 @@ class AccountActivity : AppCompatActivity()
     var bitmap : Bitmap?=null
     var ud : UserData? = null
     var filePath : Uri? = null
+    var img : ImageView?=null
+    var l : loading?=null
 
     val REQUEST_TEXT_GALLERY = 4
 
@@ -61,6 +65,8 @@ class AccountActivity : AppCompatActivity()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)
+        l = loading(this@AccountActivity)
+
 
         Accountac=this
 
@@ -82,7 +88,14 @@ class AccountActivity : AppCompatActivity()
                 Log.d("kkaaoo",user!!.uid)
                 if(p0.child(user!!.uid).exists())
                 {
+                    l!!.show()
+
+
                     myname = p0.child(auth!!.currentUser!!.uid).child("name").value.toString()
+
+                    val hd = Handler()
+                    hd.postDelayed(splashhandler(), 1000)
+
                     val intent : Intent = Intent(this@AccountActivity,LobbyActivity::class.java)
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
@@ -127,6 +140,8 @@ class AccountActivity : AppCompatActivity()
         bu.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
+
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 {
 
@@ -146,6 +161,11 @@ class AccountActivity : AppCompatActivity()
                     }
                     else
                     {
+
+
+
+
+
                         var a : ArrayList<String> = ArrayList<String>()
                         a.add("약속리스트 초기화")
                         var b : ArrayList<FriendData> = ArrayList<FriendData>()
@@ -155,61 +175,65 @@ class AccountActivity : AppCompatActivity()
 
                         database.child("Account").child(auth!!.currentUser!!.uid).setValue(ud)
 
-                        if (filePath != null) {
-            //업로드 진행 Dialog 보이기
-            val progressDialog = ProgressDialog(this@AccountActivity);
-            progressDialog.setTitle("업로드중...");
-            progressDialog.show();
+                        if (filePath != null)
+                        {
+                            //업로드 진행 Dialog 보이기
+                            val progressDialog = ProgressDialog(this@AccountActivity);
+                            progressDialog.setTitle("업로드중...");
+                            progressDialog.show();
 
-            //storage
-            var storage = FirebaseStorage.getInstance();
+                            //storage
+                            var storage = FirebaseStorage.getInstance();
 
-            //Unique한 파일명을 만들자.
-            var formatter = SimpleDateFormat("yyyyMMHH_mmss");
-            var now = Date();
-            var filename = formatter.format(now) + ".png";
-            //storage 주소와 폴더 파일명을 지정해 준다.
-           var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Account/${(LoginActivity.auth!!.currentUser!!.uid!!)}/" + filename);
-            //올라가거라...
-            storageRef.putFile(filePath!!)
-                    //성공시
-                    .addOnSuccessListener( OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            //Unique한 파일명을 만들자.
+                            var formatter = SimpleDateFormat("yyyyMMHH_mmss");
+                            var now = Date();
+                            var filename = formatter.format(now) + ".png";
+                            //storage 주소와 폴더 파일명을 지정해 준다.
+                           var storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Account/${(LoginActivity.auth!!.currentUser!!.uid!!)}/" + filename);
+                            //올라가거라...
+                            storageRef.putFile(filePath!!)
+                                    //성공시
+                                    .addOnSuccessListener( OnSuccessListener<UploadTask.TaskSnapshot>() {
 
-                       fun onSuccess( taskSnapshot:UploadTask.TaskSnapshot) {
-                            progressDialog.dismiss(); //업로드 진행 Dialog 상자 닫기
-                            Toast.makeText(getApplicationContext(), "업로드 완료!", Toast.LENGTH_SHORT).show();
+                                       fun onSuccess( taskSnapshot:UploadTask.TaskSnapshot) {
+                                            progressDialog.dismiss(); //업로드 진행 Dialog 상자 닫기
+                                            Toast.makeText(getApplicationContext(), "업로드 완료!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    //실패시
+                                    .addOnFailureListener( OnFailureListener() {
+                                       fun onFailure(  e:Exception) {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(getApplicationContext(), "업로드 실패!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    //진행중
+                                    .addOnProgressListener(OnProgressListener<UploadTask.TaskSnapshot>() {
+                                        fun onProgress( taskSnapshot:UploadTask.TaskSnapshot) {
+
+                                           var progress = (100 * taskSnapshot.getBytesTransferred()) /  taskSnapshot.getTotalByteCount();
+                                            //dialog에 진행률을 퍼센트로 출력해 준다
+                                            progressDialog.setMessage("Uploaded " + (progress) + "% ...");
+                                        }
+                                    });
+
                         }
-                    })
-                    //실패시
-                    .addOnFailureListener( OnFailureListener() {
-                       fun onFailure(  e:Exception) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "업로드 실패!", Toast.LENGTH_SHORT).show();
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(), "파일을 먼저 선택하세요.", Toast.LENGTH_SHORT).show();
                         }
-                    })
-                    //진행중
-                    .addOnProgressListener(OnProgressListener<UploadTask.TaskSnapshot>() {
-                        fun onProgress( taskSnapshot:UploadTask.TaskSnapshot) {
 
-                           var progress = (100 * taskSnapshot.getBytesTransferred()) /  taskSnapshot.getTotalByteCount();
-                            //dialog에 진행률을 퍼센트로 출력해 준다
-                            progressDialog.setMessage("Uploaded " + (progress) + "% ...");
-                        }
-                    });
-        } else {
-            Toast.makeText(getApplicationContext(), "파일을 먼저 선택하세요.", Toast.LENGTH_SHORT).show();
-        }
+                                        val intent : Intent = Intent(this@AccountActivity,LobbyActivity::class.java)
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
-                        val intent : Intent = Intent(this@AccountActivity,LobbyActivity::class.java)
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-
-                        startActivity(intent)
-                    }
-                }
+                                        startActivity(intent)
+                                    }
+                                }
 
 
-            }
-        })
+                            }
+                        })
 
 
 
@@ -234,6 +258,14 @@ class AccountActivity : AppCompatActivity()
 
 
     }
+
+    private inner class splashhandler : Runnable {
+        override fun run() {
+
+            l!!.dismiss()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==REQUEST_TEXT_GALLERY)

@@ -240,9 +240,6 @@ class ChatRoom(context : Context) : Fragment(){
 
         //database.child("message").push().setValue(chat)
 
-
-        sendPostToFCM(text)
-
         database.child("PromiseRoom").child(roomnumber).child("chatroom").push().setValue(chat)
 
     }

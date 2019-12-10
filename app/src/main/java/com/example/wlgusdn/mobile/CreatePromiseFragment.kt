@@ -77,7 +77,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         LobbyActivity.Createcon = view.findViewById(R.id.Create_Con)
         LobbyActivity.CreateMap =view.findViewById(R.id.CreatePromise_Map)
 
-        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOff
+        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
 
         tv_Date = view.findViewById(R.id.CreatePromise_TextView_Date)
         tv_Friends = view.findViewById(R.id.CreatePromise_TextView_Participant)
@@ -342,7 +342,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         Log.d("checkkk","resume")
 
         Log.d("checkkk",LobbyActivity.CreateMap!!.currentLocationTrackingMode.toString())
-        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+       LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         if(LobbyActivity.refresh==true) {
 
             val ft = fragmentManager!!.beginTransaction()
