@@ -36,7 +36,8 @@ class PromiseRoomActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_promiseroom)
 
-        try{
+        try
+        {
             roomId = intent.extras["selected"] as String
         }
         catch (e : Exception){
@@ -57,19 +58,16 @@ class PromiseRoomActivity : AppCompatActivity()
                     val intent = Intent(this@PromiseRoomActivity,service::class.java)
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        Log.d("wlgusdn111","start")
                         startForegroundService(intent)
 
                     }
                     else
                     {
-                        Log.d("wlgusdn111","start11")
                         startService(intent)
                     }
                 }
                 else
                 {
-                    Log.d("wlgusdn111","stop11")
                     val intent = Intent(this@PromiseRoomActivity,service::class.java)
 
                     stopService(intent)
@@ -89,12 +87,9 @@ class PromiseRoomActivity : AppCompatActivity()
 
         intentt = intent
         viewPager = findViewById(R.id.viewpager1)
-        //viewPager2 = findViewById(R.id.viewpager2)
         setupViewPager(viewPager)
-        //setupViewPager(viewPager2)
         tabLayout = findViewById(R.id.tabs1)
         tabLayout!!.setupWithViewPager(viewPager)
-        //tabLayout!!.setupWithViewPager(viewPager2)
         setupTabIcons()
 
 
@@ -128,7 +123,6 @@ class PromiseRoomActivity : AppCompatActivity()
         adapter.addFrag(ChatRoom(this), "Chat")
         adapter.addFrag(PhotoRoom(this), "Photo")
 
-        //adapter.addFrag(heart(), "HEART")
         viewPager!!.adapter = adapter
         viewPager.offscreenPageLimit= 7         // 한번에 5개의 ViewPager를 띄우겠다 -> 성능향상
 
@@ -146,9 +140,7 @@ class PromiseRoomActivity : AppCompatActivity()
                 if(position == 2){
                     val frag = adapter.getItem(position)
                     frag.onResume()
-                    //refresh()
                 }
-                //viewPager.adapter?.notifyDataSetChanged()
 
 
             }

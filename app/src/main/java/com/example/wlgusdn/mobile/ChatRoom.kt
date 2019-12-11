@@ -238,7 +238,6 @@ class ChatRoom(context : Context) : Fragment(){
 
         val chat : ChatRoom_Chat = ChatRoom_Chat(userId, text, time)
 
-        //database.child("message").push().setValue(chat)
 
         database.child("PromiseRoom").child(roomnumber).child("chatroom").push().setValue(chat)
 
@@ -303,7 +302,6 @@ class ChatRoom(context : Context) : Fragment(){
         if (intent.resolveActivity(thiscontext.packageManager) != null) {
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
         }
-        //ChatEditText?.setText(intent.toString())
     }
 
 
@@ -314,7 +312,6 @@ class ChatRoom(context : Context) : Fragment(){
 
         val uri: Uri = FileProvider.getUriForFile(
                 thiscontext,
-                //"com.example.android.fileprovider",
                 BuildConfig.APPLICATION_ID,
                 file
         )
@@ -362,7 +359,8 @@ class ChatRoom(context : Context) : Fragment(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK){
-            if (requestCode == REQUEST_SELECT_IMAGE_IN_ALBUM){
+            if (requestCode == REQUEST_SELECT_IMAGE_IN_ALBUM)
+            {
                 val url : Uri ?= data?.data
                 filePath = url
                 val time: String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
@@ -373,9 +371,6 @@ class ChatRoom(context : Context) : Fragment(){
 
                     val resizedBitmap = resizeBitmap(bitmap)
                     addPhotoDB(username, time, resizedBitmap)
-                    //addRecyclerChat(username, username, "", time, resizedBitmap, ChatList)
-                    //writeNewMessage(userid, filename, time)
-                    //addGridPhoto("user", time, resizedBitmap)
 
                 }catch (e:Exception){
                     e.printStackTrace()
@@ -384,9 +379,7 @@ class ChatRoom(context : Context) : Fragment(){
 
             else if (requestCode == REQUEST_IMAGE_CAPTURE) {
 
-                //To get the File for further usage
                 val auxFile = File(mCurrentPhotoPath)
-                //filePath = Uri.fromFile(auxFile)
 
                 val time: String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
 
@@ -397,13 +390,11 @@ class ChatRoom(context : Context) : Fragment(){
                 resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , auxFile.outputStream())
                 filePath = Uri.fromFile(auxFile)
                 addPhotoDB(username, time, resizedBitmap)
-                //imageView.setImageBitmap(bitmap)
 
             }
 
 
             else{
-                Log.d("Activity result", "sth wrong")
             }
 
 
@@ -455,14 +446,12 @@ class ChatRoom(context : Context) : Fragment(){
     private fun resizeBitmap(bitmap:Bitmap):Bitmap{
         val w : Int = bitmap.width
         val h : Int = bitmap.height
-        //println("w: ${w}, h: ${h}")
 
 
         var ratio = 400.0/w
         var width = w * ratio
         var height = h * ratio
 
-        //println("w: ${width}, h: ${height}")
         return Bitmap.createScaledBitmap(
                 bitmap,
                 width.toInt(),
@@ -477,8 +466,6 @@ class ChatRoom(context : Context) : Fragment(){
 
 
         val photo = PhotoRoom_Photo(who, time, image)
-        //databaseRef.child("photoroom").push().setValue(photo)
-        //database.child("PromiseRoom").child("PromiseNumber").child("chatroom").push().setValue(chat)
 
         println("filePath: ${filePath}")
 

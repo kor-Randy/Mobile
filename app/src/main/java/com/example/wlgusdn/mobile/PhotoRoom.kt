@@ -40,7 +40,8 @@ import java.lang.Exception
 
 
 @SuppressLint("ValidFragment")
-class PhotoRoom(context : Context) : Fragment(){
+class PhotoRoom(context : Context) : Fragment()
+{
     var thiscontext = context
     val PhotoList: MutableList<PhotoRoom_Photo> = arrayListOf()
     //val photo by lazy {intent.extras[]}

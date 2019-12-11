@@ -28,7 +28,6 @@ class LoginCallback : FacebookCallback<LoginResult> {
 
     override fun onSuccess(loginResult: LoginResult) {
 
-        Log.e("Callback :: ", "onSuccess")
 
         requestMe(loginResult.accessToken)
 
@@ -39,7 +38,6 @@ class LoginCallback : FacebookCallback<LoginResult> {
 
     override fun onCancel() {
 
-        Log.e("Callback :: ", "onCancel")
 
     }
 
@@ -48,7 +46,6 @@ class LoginCallback : FacebookCallback<LoginResult> {
 
     override fun onError(error: FacebookException) {
 
-        Log.e("Callback :: ", "onError : " + error.message)
 
     }
 

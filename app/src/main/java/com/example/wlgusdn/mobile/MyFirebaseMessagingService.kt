@@ -10,12 +10,12 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+    //FCM을 위해 사용하는 코드
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         if (remoteMessage.getNotification() != null) {
             val body = remoteMessage.getNotification()!!.getBody()
-            Log.d(TAG, "Notification Body: $body")
 
             val notificationBuilder = NotificationCompat.Builder(getApplicationContext())
                     .setSmallIcon(R.mipmap.ic_launcher) // 알림 영역에 노출 될 아이콘.
@@ -37,14 +37,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
-    //dQ46cx4gPio:APA91bHyTDQ9fGLSubNSPrj0Zr2PLEXajqZVPw5GgMdPe3zvU9p-h1Ju01inn6RZtIdfdawsYC-tQFeT9ZGrSIDy6u7GJRYV_0ZYHb-ylfyjkgYuCCKFwfL6-8BxreBoyIJjZtMI0dND
-    //d_pNjttl9VE:APA91bFuMwv8gj_gVUEuts-v2nHC6ws5FkNZ2U7wrMt9TgL5X71O37a242F1yurVrmcB7I9p3U9zMtl8WyY1aGFD2kg54VQ8_WJVwP3yzcT0FCIwYRqmcleEhYgyqVdIA8qkcGC6L10O
 
 
     override fun onNewToken(s: String) {
         super.onNewToken(s)
 
-        Log.d("asdasdasd", s)
 
 
     }

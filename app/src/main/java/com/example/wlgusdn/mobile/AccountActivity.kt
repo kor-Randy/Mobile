@@ -76,6 +76,7 @@ class AccountActivity : AppCompatActivity()
         bu = findViewById(R.id.Account_Button_Apply)
         image = findViewById(R.id.Account_Image)
 
+        //계정이 있는지 확인
         database.child("Account").addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
@@ -85,8 +86,7 @@ class AccountActivity : AppCompatActivity()
 
             override fun onDataChange(p0: DataSnapshot) {
                 //계정이 있는지 확인
-                Log.d("checkkk",p0.child(et_Name.text.toString()).value.toString())
-                Log.d("kkaaoo",user!!.uid)
+
                 if(p0.child(user!!.uid).exists())
                 {//계정이 있는지 확인
 
@@ -129,6 +129,7 @@ class AccountActivity : AppCompatActivity()
 
 
 
+        //이미지 올리기
             image.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
@@ -139,6 +140,7 @@ class AccountActivity : AppCompatActivity()
             }
         })
 
+        //회원가입 버튼
         bu.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 

@@ -60,6 +60,7 @@ class service : Service(),LocationListener
 
     @SuppressLint("MissingPermission")
     fun lo(): Location {
+        //위치 찾기
 
             var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -107,7 +108,6 @@ class service : Service(),LocationListener
     fun startForeground()
     {
         sem=0
-        Log.d("wlgusdn1","Start")
         val notificationIntent = Intent(this,PromiseRoomActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
@@ -115,7 +115,7 @@ class service : Service(),LocationListener
 
         val builder: NotificationCompat.Builder
         if (Build.VERSION.SDK_INT >= 26) {
-            Log.d("wlgusdn111","123")
+
             val CHANNEL_ID = "snwodeer_service_channel"
             val channel = NotificationChannel(CHANNEL_ID,
                     "SnowDeer Service Channel",
@@ -126,7 +126,6 @@ class service : Service(),LocationListener
 
             builder = NotificationCompat.Builder(this, CHANNEL_ID)
         } else {
-            Log.d("wlgusdn111","456")
             builder = NotificationCompat.Builder(this)
         }
         builder.setSmallIcon(R.mipmap.ic_launcher)
@@ -137,6 +136,7 @@ class service : Service(),LocationListener
         startForeground(1, builder.build())
 
         with(NotificationManagerCompat.from(this)) {
+            //Notification생성 <-ForeGround
             // notificationId is a unique int for each notification that you must define
             sercon=this@service
             notify(1, builder.build())

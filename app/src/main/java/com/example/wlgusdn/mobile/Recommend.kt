@@ -160,22 +160,9 @@ class Recommend : AppCompatActivity(){
 
     fun getlist(){
         println("url ${apiurl}")
-        //val output  = Download.execute(apiurl).get()
         val output = Download.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, apiurl).get()
         //Download.isCancelled
         println("output  ${output}")
-
-        /*
-        val jsonArray = JSONArray(output)
-        println("jsonarray ${jsonArray}")
-        for (x in 0 until jsonArray.length()) {
-            val jsonObject = jsonArray.getJSONObject(x)
-            val items = jsonObject.getJSONArray("items")
-            val body = jsonObject.getJSONArray("body")
-
-            println("items ${items}")
-            println("body ${body}")
-        }*/
 
         var json = JSONObject(output)
         json = json.getJSONObject("response")
@@ -226,31 +213,7 @@ class Recommend : AppCompatActivity(){
             try {
 
                 image = jsonObject.getString("firstimage")
-                //bitmap = getBitmapFromURL(image)
 
-                //bitmap = DownloadImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, image).get()
-                //bitmap = DownloadImage.execute(image).get()
-
-
-                //println("image: ${image}")
-
-                //bitmap = StringToBitmap(image)
-
-                //bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(image.toByteArray()))
-                //println("image: ${bitmap}")
-
-
-                /*
-                val uri : URL = URL(jsonObject.getString("firstimage"))
-                var connection : HttpURLConnection = uri.openConnection() as HttpURLConnection
-                connection.requestMethod //GET
-
-                val inputstream: InputStream? = connection.inputStream
-
-                bitmap = BitmapFactory.decodeStream(inputstream)
-                */
-
-                //Glide.with(this).load(image).
 
 
 
@@ -259,14 +222,7 @@ class Recommend : AppCompatActivity(){
                 println("image exception: ${e.printStackTrace()}")
             }
 
-            /*
-            if (jsonObject.getString("firstimage") != null){
-                var image = jsonObject.getString("firstimage")
-                image = Download.execute(image).get()
-                println("image: ${image}")
 
-
-            }*/
 
 
 
@@ -308,14 +264,6 @@ class Recommend : AppCompatActivity(){
 
 
 
-        //RecommendList.add(Recommend_Data("name", "address", "sites", null))
-
-        /*
-        val adapter = Recommend_Adapter(this, RecommendList_tour)
-
-        Recommend_recyclerview.adapter = adapter
-        Recommend_recyclerview.layoutManager = LinearLayoutManager(this)
-        */
     }
 
 
@@ -336,19 +284,7 @@ class Recommend : AppCompatActivity(){
                     bitmap = BitmapFactory.decodeStream(inputstream)
 
                     println("bitmap ${bitmap}")
-                    //bitmap to string
-                    // var baos : ByteArrayOutputStream ?= null
-                    //bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos)
-                    //val bytes = baos?.toByteArray()
-                    //val string : String = Base64.encodeToString(bytes, Base64.DEFAULT)
 
-
-                    //image = string
-
-
-                    //val buffreader : BufferedReader = inputstream!!.bufferedReader(Charsets.UTF_8)
-
-                    //image = inputstream.toString()
 
                 }
             }catch (e: Exception){

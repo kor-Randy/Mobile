@@ -66,30 +66,22 @@ class MainActivity(context : Context) : Fragment(){
 
         val view = inflater!!.inflate(R.layout.fragment_main, container, false) as View
 
-        //Promisebtn = view.findViewById(R.id.Main_Button_Promise)
-        //friendbtn = view.findViewById(R.id.Main_Friend)
-        //et = view.findViewById(R.id.Main_et)
+
         compactCalendarView = view.findViewById(R.id.calendarView)
         showDate = view.findViewById(R.id.today)
 
 
-        //showDate.text = finalDate
         val calendar = Calendar.getInstance()
-        //val currentCalendar = Calendar.getInstance().timeInMillis
         val Year = calendar.get(Calendar.YEAR)
         val Month = calendar.get(Calendar.MONTH) + 1
         val Day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        //val date = calendarview.getDate()
+
 
 
         val finalDate = "${Year} 년 ${Month}월 ${Day}일"
         showDate.text = finalDate
-        // var millis = currentCalendar*1000
-        //var mil = compactCalendarView.setCurrentDate()
 
-        //var ev = Event(Color.RED,1576116457000,"promise")
-        //compactCalendarView.addEvent(ev)
 
         val list : ListView= view.findViewById(R.id.Main_listview)
         val adapter  = ArrayAdapter (thiscontext, android.R.layout.simple_list_item_1, promiselist_show)
@@ -106,50 +98,14 @@ class MainActivity(context : Context) : Fragment(){
 
         }
 
-        /*
-        friendbtn.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
 
-                //친구추가 팝업
-                val intent : Intent = Intent(thiscontext,FriendPopup::class.java)
-                startActivity(intent)
-
-
-            }
-        })
-
-        Promisebtn.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
-                LobbyActivity.Createcon!!.removeView(LobbyActivity.CreateMap!!)
-                val intent : Intent = Intent(thiscontext,PromiseRoom::class.java)
-                intent.putExtra("select",1)
-                startActivityForResult(intent,0)
-
-            }
-        })*/
-
-        /*calendarview.setOnDateChangeListener(object:CalendarView.OnDateChangeListener{
-            override fun onSelectedDayChange(p0: CalendarView, p1: Int, p2: Int, p3: Int) {
-                var p2 = p2 + 1
-                var date : String = "${p1}년 ${p2}월 ${p3}일"
-                showDate.text = date
-                Log.d("TAG","onSelectedDayChange:" + date)
-
-                //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
-
-            }
-        })*/
 
         compactCalendarView.setListener(object: CompactCalendarView.CompactCalendarViewListener{
             //날짜 클릭할 때
             override fun onDayClick(dateClicked: Date?) {
-                //TODO("not implemented") To change body of created functions use File | Settings | File Templates.
                 var date = dateClicked
                 val sdf = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA)
                 val stringdate = sdf.format(dateClicked)
-                //val parse = sdf.parse(stringdate)
-                //Log.d("Tag",parse.toString())
                 var today= stringdate
                 var showDate = view.findViewById<TextView>(R.id.today)
                 showDate.text = today + "의 약속"
@@ -176,11 +132,9 @@ class MainActivity(context : Context) : Fragment(){
             }
             //달력 넘길 때
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
-                //TODO("not implemented") To change body of created functions use File | Settings | File Templates.
                 var thismonth = compactCalendarView.firstDayOfCurrentMonth.toString()
                 val result = thismonth.subSequence(30,34).toString() + " " +thismonth.subSequence(4,7).toString()
                 Toast.makeText(context, result,Toast.LENGTH_SHORT).show()
-                //Log.d("TAG",firstDayOfNewMonth.toString())
             }
 
         })
@@ -202,7 +156,6 @@ class MainActivity(context : Context) : Fragment(){
                     var time : String = ""
                     var date : String = ""
 
-                    //val todate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
 
 
                     promise_db.child(promise)
@@ -215,17 +168,8 @@ class MainActivity(context : Context) : Fragment(){
                                     roomname = p0.child("name").value.toString()
                                     time = p0.child("time").value.toString()
                                     date = p0.child("date").value.toString()
-                                    //println(date)
 
-                                    /*val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd", Locale.KOREA)
-                                    val todate = LocalDate.parse(date,formatter)
-
-                                    val epoch_ = todate.toEpochDay()
-                                    println(epoch_)*/
-
-                                    //string 형식으로 받아 온 date를 Date 형식으로 변환 후 millisecond 값 뽑기
                                     val sdf = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA)
-                                    //val stringdate = sdf.format(date)
                                     val todate_date = sdf.parse(date)
                                     val epoch = todate_date.time
                                     println(epoch)
@@ -280,8 +224,7 @@ class MainActivity(context : Context) : Fragment(){
             override fun onCancelled(databaseError: DatabaseError) {}
         }
 
-        //database.child("PromiseRoom").child(roomnumber).child("chatroom").addChildEventListener(childEventListener)
-        //database.child("Account").child(userid).child("promises").addValueEventListener(postListener)
+
         database.child("Account").child(userid).child("promises").addChildEventListener(childEventListener)
 
         return view

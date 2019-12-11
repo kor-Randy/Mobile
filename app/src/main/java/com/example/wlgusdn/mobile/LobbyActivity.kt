@@ -116,7 +116,6 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
                 var aaa  = object : ResponseCallback<KakaoLinkResponse>(){
                     override fun onSuccess(result: KakaoLinkResponse?) {
 
-                        Log.d("ststst","성공")
 
                     }
 
@@ -164,7 +163,6 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
             override fun onSuccess(result: KakaoLinkResponse?) {
 
 
-                Log.d("ststst","성공")
 
 
             }
@@ -228,7 +226,6 @@ class LobbyActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelecte
 
             if(data?.getIntExtra("res",0)==2)
             {
-                Log.d("checkkk","재구성")
                 val ft = fragmentManager!!.beginTransaction()
                 if (Build.VERSION.SDK_INT >= 26) {
                     ft.setReorderingAllowed(false);

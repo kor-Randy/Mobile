@@ -93,19 +93,8 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
         bu_Time = view.findViewById(R.id.CreatePromise_Button_Time)
         bu_Create = view.findViewById(R.id.CreatePromise_Button_Create)
 
-
-        /*
-        val button_reco : Button = view.findViewById(R.id.CreatePromiseRoom_recommend)
-
-        button_reco.setOnClickListener {
-            val nextIntent = Intent(activity, Recommend::class.java)
-            startActivity(nextIntent)
-        }*/
-
-
-
-
         tv_Participant!!.hint="지현우,연송희,이유리"
+
 
         bu_Create!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
@@ -143,16 +132,8 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
                                               var ud =p0.child("Account").child(arr!![i].Id!!).getValue(UserData::class.java)
                                      userarr.add(ud!!)
 
-                                              /*   while(true)
-                                                 {//Account를 찾아가던 중 내가 찾는 이름을 갖고 있지 않으면 계속해서 찾는다.
-                                                     var aa = p0.child("Account").children.iterator().next()
-                                                     if(aa.child("name").value.toString().equals(part[i]))
-                                                     {
-                                                         Log.d("ccheckk",aa.key.toString())
-                                                     }
 
-                                                 }*/
-
+                                            //push()한 Key값 받아오기
                                               Log.d("ccheckk",p0.child("PromiseRoom").children.last().key)
                                               RoomNum = p0.child("PromiseRoom").children.last().key
 
@@ -198,6 +179,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
 
 
+        //날짜 선택 버튼
         bu_Date!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
@@ -228,6 +210,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
             }
         })
 
+        //시간 선택 버튼
         bu_Time!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
@@ -252,6 +235,7 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
             }
         })
 
+        //친구 초대 버튼
     bu_Invite.setOnClickListener(object: View.OnClickListener {
         override fun onClick(v: View?) {
 
@@ -279,15 +263,19 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
         if(requestCode== CheckFriendList)
         {
-           arr = data!!.getParcelableArrayListExtra<FriendData>("arr")
-            Log.d("ccheckk",arr.toString())
-            var str : String=""
-            for(i in 0..arr!!.size-1)
-            {
-                str += arr!![i].Name+","
-            }
-            tv_Participant.text = str
+            if(data!=null) {
+                arr = data?.getParcelableArrayListExtra<FriendData>("arr")
 
+                var str: String = ""
+                for (i in 0..arr!!.size - 1) {
+                    str += arr!![i].Name + ","
+                }
+                tv_Participant.text = str
+            }
+            else
+            {
+                //null
+            }
         }
     }
 
@@ -345,11 +333,13 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
        LobbyActivity.CreateMap!!.currentLocationTrackingMode= MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         if(LobbyActivity.refresh==true) {
 
+            //Fragment 재 실행
+
             val ft = fragmentManager!!.beginTransaction()
             if (Build.VERSION.SDK_INT >= 26) {
                 ft.setReorderingAllowed(false);
             }
-            ft.detach(this).attach(this).commit();//Fragment 재 실행
+            ft.detach(this).attach(this).commit();
             LobbyActivity.refresh=false
         }
 

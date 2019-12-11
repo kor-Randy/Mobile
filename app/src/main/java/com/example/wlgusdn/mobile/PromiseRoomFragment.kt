@@ -96,10 +96,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
        // LobbyActivity.PromiseMap.setMapCenterPoint()
 
-
-
-
-
+        //들어온 채팅방의 정보를 받아옴
         database.getReference("PromiseRoom").child(PromiseRoomActivity.roomId!!)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(p0: DatabaseError) {
@@ -109,9 +106,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                         Text_Place!!.text = p0.child("address").value.toString()
                         Text_Time!!.text = p0.child("date").value.toString() + ",  " + p0.child("time").value.toString()
 
-                        Log.d("wlgusdn111",p0.child("lati").getValue(true).toString())
-                        Log.d("wlgusdn111",p0.child("long").getValue(true).toString())
-                        Lati = p0.child("lati").value.toString().toDouble()
+                         Lati = p0.child("lati").value.toString().toDouble()
                         Long= p0.child("long").getValue(true).toString().toDouble()
                         //Text_Participant!!.text = p0.child("participants").value
 
@@ -210,6 +205,8 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
 
                 }
+                //이 Listener가 먼저 시작되면 POI가 생성되지 않을 수 있음
+                //왜냐하면 -> Listener들은 순서가 동기화가 아니라 비동기화 이기 떄문
                 database.getReference("PromiseRoom").child(PromiseRoomActivity.roomId!!).child("Location").addChildEventListener(object: ChildEventListener {
                     override fun onCancelled(p0: DatabaseError) {
 
@@ -221,7 +218,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                     }
 
                     override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                        Log.d("wlgusdn111",p0.key)
+
 
                         nld = p0.getValue(NowLocationData::class.java)!!
 
@@ -229,7 +226,6 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                         {
                             if(poi[i].itemName == p0.key)
                             {
-                                Log.d("wlgusdn111","Add")
 
                                 LobbyActivity.PromiseMap!!.removePOIItem(poi[i])
                                 poi[i].mapPoint = MapPoint.mapPointWithGeoCoord(nld.Lati!!,nld.Long!!)
@@ -515,7 +511,6 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
 
             if (check_result) {
-                Log.d("@@@", "start")
                 //위치 값을 가져올 수 있음
                 LobbyActivity.PromiseMap!!.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
             } else {

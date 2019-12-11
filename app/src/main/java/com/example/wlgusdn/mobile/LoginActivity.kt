@@ -63,7 +63,6 @@ class LoginActivity : AppCompatActivity()
         logincontext=this@LoginActivity
         auth=FirebaseAuth.getInstance()
 
-        Log.d("kkaaoo",sf!!.getString("face","nono"))
 
         if(sf!!.getString("face",null)!=null) {
 
@@ -74,12 +73,10 @@ class LoginActivity : AppCompatActivity()
                             l!!.show()
                             // Sign in success, update UI with the signed-in user's information
                             user = auth!!.currentUser
-                            Log.d("kkaaoo", "signInWithCredential:success")
 
                             gogo(user)
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("kkaaoo", "signInWithCredential:failure", task.exception)
                             Toast.makeText(this@LoginActivity, "Authentication failed.", Toast.LENGTH_LONG).show()
 
                             gogo(null)
@@ -154,7 +151,6 @@ class LoginActivity : AppCompatActivity()
         super.onActivityResult(requestCode, resultCode, data)
 
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
-            Log.d("kkaaoo", "session get current session")
             return
         }
         else
@@ -168,7 +164,7 @@ class LoginActivity : AppCompatActivity()
 
     fun handleFacebookAccessToken(token : AccessToken?)
     {
-        Log.d("kkaaoo", "handleFacebookAccessToken:$token")
+        //페이스북 로그인
 
         if (token != null) {
             val credential = FacebookAuthProvider.getCredential(token.token)
@@ -176,13 +172,11 @@ class LoginActivity : AppCompatActivity()
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("kkaaoo", "signInWithCredential:success")
 
                             user = auth!!.currentUser
                             gogo(auth!!.currentUser)
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("kkaaoo", "signInWithCredential:failure", task.exception)
                            Toast.makeText(this@LoginActivity,"Authentication failed.",Toast.LENGTH_LONG).show()
 
                             gogo(null)
@@ -223,9 +217,10 @@ class LoginActivity : AppCompatActivity()
 
     private class SessionCallback : ISessionCallback {
 
+        //카카오 로그인 Callback함수
 
         override fun onSessionOpenFailed(exception: KakaoException?) {
-            Log.d("kkaaoo","Session Call back :: onSessionOpenFailed: ${exception?.message}")
+
         }
 
         override fun onSessionOpened() {
@@ -234,11 +229,9 @@ class LoginActivity : AppCompatActivity()
 
 
                 override fun onFailure(errorResult: ErrorResult?) {
-                    Log.d("kkaaoo","Session Call back :: on failed ${errorResult?.errorMessage}")
                 }
 
                 override fun onSessionClosed(errorResult: ErrorResult?) {
-                    Log.d("kkaaoo","Session Call back :: onSessionClosed ${errorResult?.errorMessage}")
 
                 }
 
@@ -246,31 +239,25 @@ class LoginActivity : AppCompatActivity()
                     checkNotNull(result) {
 
                         "session response null" }
-                    Log.d("kkaaoo","Success"+result!!.id)
 
 
                     var id = Session.getCurrentSession().accessToken
 
 
 
-                   /* auth!!.signInWithCustomToken(id).addOnCompleteListener { task ->
 
-
-                         Log.d("kkaaoo","signinwithcustomtokensussess")
-                            val intent = Intent(logincontext, AccountActivity::class.java)
-                            logincontext!!.startActivity(intent)
-
-
-                    }*/
                     if(sf!!.contains("kakao"))
                     {
+                        //한번이라도 로그인을 했으면
 
                         val intent = Intent(logincontext, AccountActivity::class.java)
                         logincontext!!.startActivity(intent)
                     }
                     else
                     {
+                        //로그인 한 정보가 없으면
                     auth!!.signInAnonymously().addOnCompleteListener { task ->
+                        //익명으로 FireBase Auth생성
                         user=FirebaseAuth.getInstance().currentUser
 
                         Log.d("kkaaoo", user!!.uid)
