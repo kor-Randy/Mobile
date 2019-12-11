@@ -55,17 +55,15 @@ class Recommend : AppCompatActivity(){
         setContentView(R.layout.fragment_recommend)
 
 
-        //val button : ImageButton = findViewById(R.id.Recommend_button)
-        //var search : EditText = findViewById(R.id.Recommend_search)
 
         val place : Button = findViewById(R.id.Recommend_place)
         val restaurant : Button = findViewById(R.id.Recommend_rest)
         val tour : Button = findViewById(R.id.Recommend_tour)
         val festival : Button = findViewById(R.id.Recommend_festival)
 
-        //println("latitude only  ${latitude}, long ${longitude}")
+
         println("position ${position.split(",")[0]}   ${position.split(",")[1]}")
-        //Download.execute(apiurl)
+
 
         val latitude : String = position.split(",")[0]
         val longitude : String = position.split(",")[1]

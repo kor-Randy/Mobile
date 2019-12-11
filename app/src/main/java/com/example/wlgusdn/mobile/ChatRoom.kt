@@ -132,14 +132,11 @@ class ChatRoom(context : Context) : Fragment(){
         println("roomid: ${roomnumber}")
         ChatButton.setOnClickListener {
 
-            //val who = userid
-            //userid = useredit.text.toString()
             val who : String = username
             val time : String = DateUtils.fromMillisToTimeString(Calendar.getInstance().timeInMillis)
             val text : String = ChatEditText.text.toString()
 
-            //println("write button who ${who}, text ${text}  time ${time}")
-            //addRecyclerChat(who, text, time, null ,ChatList)
+
             writeNewMessage(who, text, time)
             ChatEditText.setText("")
             sendPostToFCM(text)
@@ -233,6 +230,7 @@ class ChatRoom(context : Context) : Fragment(){
 
 
 
+    //디비에 올리기
 
     private fun writeNewMessage(userId: String, text: String, time: String) {
 
@@ -244,6 +242,7 @@ class ChatRoom(context : Context) : Fragment(){
     }
 
 
+    //푸시 메시지
 
     private fun sendPostToFCM(message: String) {
 
@@ -296,6 +295,7 @@ class ChatRoom(context : Context) : Fragment(){
 
     }
 
+    //앨범으로 넘어가기
     private fun selectImageInAlbum() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
@@ -304,7 +304,7 @@ class ChatRoom(context : Context) : Fragment(){
         }
     }
 
-
+    //카메라로 넘어가기
     private fun takePicture() {
 
         val intent: Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -355,6 +355,7 @@ class ChatRoom(context : Context) : Fragment(){
 
 
 
+    //앨범, 카메라에서 request넘어 오고난 후
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -462,6 +463,7 @@ class ChatRoom(context : Context) : Fragment(){
 
 
 
+    //스토리지에 올리기
     private fun addPhotoDB(who : String, time : String, image : Bitmap){
 
 

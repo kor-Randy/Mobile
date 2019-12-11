@@ -70,7 +70,7 @@ class MainActivity(context : Context) : Fragment(){
         compactCalendarView = view.findViewById(R.id.calendarView)
         showDate = view.findViewById(R.id.today)
 
-
+        //오늘 날짜 받기
         val calendar = Calendar.getInstance()
         val Year = calendar.get(Calendar.YEAR)
         val Month = calendar.get(Calendar.MONTH) + 1
@@ -82,7 +82,7 @@ class MainActivity(context : Context) : Fragment(){
         val finalDate = "${Year} 년 ${Month}월 ${Day}일"
         showDate.text = finalDate
 
-
+        //선택된 날짜의 약속방만 띄우기
         val list : ListView= view.findViewById(R.id.Main_listview)
         val adapter  = ArrayAdapter (thiscontext, android.R.layout.simple_list_item_1, promiselist_show)
         list.adapter = adapter

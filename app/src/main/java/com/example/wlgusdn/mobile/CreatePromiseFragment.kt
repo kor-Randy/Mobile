@@ -368,6 +368,8 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
     }
 
+
+    //poi 누르면 장소추천으로 넘어가기
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem) {
 
         val poi : MapPOIItem = p1
@@ -400,10 +402,8 @@ class CreatePromiseFragment(context: Context) : Fragment(), MapView.POIItemEvent
 
         poi.itemName = "장소 추천"
         poi.mapPoint= MapPoint.mapPointWithGeoCoord(p1!!.mapPointGeoCoord.latitude,p1!!.mapPointGeoCoord.longitude)
-        poi.markerType = MapPOIItem.MarkerType.CustomImage
+        poi.markerType = net.daum.mf.map.api.MapPOIItem.MarkerType.RedPin
         poi.isShowCalloutBalloonOnTouch=true
-        poi.customImageResourceId = R.drawable.cat
-        poi.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.cat
 
         LobbyActivity.CreateMap!!.addPOIItem(poi)
 

@@ -121,8 +121,8 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                         poii.leftSideButtonResourceIdOnCalloutBalloon = R.drawable.dog
                         LobbyActivity.PromiseMap!!.addPOIItem(poii)
 
-                        //val size = p0.child("participants").childrenCount
-                        //println("size : ${size}")
+
+                        //참여자의 정보 가져오기 (이름 아이디 사진 번호)
                         var len : Int = 0
                         var people : String = ""
 
@@ -173,7 +173,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                                     }
 
                             len = len + 1
-                            println("people : ${people}")
+
 
 
                         }
@@ -226,6 +226,8 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
                         {
                             if(poi[i].itemName == p0.key)
                             {
+
+                                //참여자의 정보를 가지고 마커 띄우기
 
                                 LobbyActivity.PromiseMap!!.removePOIItem(poi[i])
                                 poi[i].mapPoint = MapPoint.mapPointWithGeoCoord(nld.Lati!!,nld.Long!!)
@@ -372,7 +374,7 @@ class PromiseRoomFragment constructor(context : Context) : Fragment(), MapView.P
 
         Toast.makeText(thiscontext,p1!!.itemName, Toast.LENGTH_LONG).show()
 
-
+        //참여자의 마커 눌렀을 때 전화로 넘어가기
 
         if(p1.markerType==MapPOIItem.MarkerType.CustomImage) {
 

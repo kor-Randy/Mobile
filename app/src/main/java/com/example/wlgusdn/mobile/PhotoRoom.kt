@@ -80,7 +80,6 @@ class PhotoRoom(context : Context) : Fragment()
         storageRef = storage.getReferenceFromUrl("gs://mobilesw-8dd3b.appspot.com").child("Photoroom/" + roomnumber + "/")
 
         gridview = view.findViewById(R.id.PhotoRoom_Gridview)
-        //imageview = findViewById(R.id.PhotoRoom_ImagePage)
         image = view.findViewById(R.id.PhotoRoom_ImageView)
         val download : Button= view.findViewById(R.id.PhotoRoom_download)
 
@@ -102,6 +101,9 @@ class PhotoRoom(context : Context) : Fragment()
 
             when(view_change){
                 1 -> {
+
+
+                    // 전체 사진 저장할 때
 
                     val builder = AlertDialog.Builder(thiscontext)
                     builder.setTitle("모든 사진을 저장하시겠습니까?")
@@ -154,6 +156,8 @@ class PhotoRoom(context : Context) : Fragment()
                 }
 
                 2 -> {
+
+                    //선택된 사진만 저장할 떄
 
                     val builder = AlertDialog.Builder(thiscontext)
                     builder.setTitle("선택하신 사진을 저장하시겠습니까?")
@@ -215,6 +219,8 @@ class PhotoRoom(context : Context) : Fragment()
         )
     }
 
+
+    //사진방의 리스트를 가져오기
     fun getlist(){
         PhotoList.clear()
         println("getlist")

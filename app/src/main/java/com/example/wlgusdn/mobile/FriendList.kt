@@ -31,12 +31,11 @@ class FriendList : Activity()
 {
     lateinit var lv : RecyclerView
     lateinit var bu : Button
-    //var arr = ArrayList<FriendData>()
+
     var array : MutableList<FriendData> = arrayListOf()
 
     var checkedarr = ArrayList<FriendData>()
-    var arrname = ArrayList<String>()
-    var arrid  = ArrayList<String>()
+
 
     val database = FirebaseDatabase.getInstance().getReference()
     var adapter : FriendList_Adapter?= null

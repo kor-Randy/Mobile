@@ -47,6 +47,7 @@ class Chatroom_ChatAdapter (roomnumber : String, userid: String, chatList : Muta
         val chat = chatList!![position]
 
         when (p0){
+            //내가 보낸 메시지일때
             is MyViewHolder -> {
                 p0.myText.text = chat.text
                 p0.myTextTime.text = chat.time
@@ -57,7 +58,7 @@ class Chatroom_ChatAdapter (roomnumber : String, userid: String, chatList : Muta
                     if (check[1] == "jpg"){
                         println("adapter_mytext is image")
                         p0.myText.text = "image"
-                        //p0.myTextTime.text = chat.time
+
 
 
                         storageRef.child(chat.text).getBytes(2048 * 4096).addOnSuccessListener{
@@ -73,7 +74,6 @@ class Chatroom_ChatAdapter (roomnumber : String, userid: String, chatList : Muta
 
                         }.addOnFailureListener {
                             println("image not yet")
-                                //Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show()
                         }
 
 
@@ -98,7 +98,7 @@ class Chatroom_ChatAdapter (roomnumber : String, userid: String, chatList : Muta
 
             }
 
-
+            //상대방이 보낸 메시지일때
             is OtherViewHolder ->{
                 p0.otherUser.text = chat.who
                 p0.otherTextTime.text = chat.time
